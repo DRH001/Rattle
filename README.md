@@ -1,7 +1,7 @@
 # DENSE
 A new esoteric programming language
 
-`DENSE` is just a placeholder name (which I may end up keeping) - suggestions would be appreciated!
+`DENSE` is just a placeholder name - suggestions would be appreciated!
 
 This language uses a very particular format:
 
