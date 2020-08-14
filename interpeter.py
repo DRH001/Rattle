@@ -3,6 +3,7 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
+@version: 0.1.0
 """
 
 
