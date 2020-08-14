@@ -31,6 +31,7 @@ def parse(code):
     global storedArray
     global secondArg
     global argFlag
+    global printBuffer
     
     currentCommandIndex = 0
     #loopStart = 0
@@ -42,6 +43,7 @@ def parse(code):
     storedArray = []
     secondArg = None
     argFlag = False
+    printBuffer = ""
     
     
     outputAtEnd = True
@@ -77,6 +79,8 @@ def parse(code):
         outputAtEnd = False
         
     try:#auto-parses the input as what it should be
+        if("&" in str(topOfStack)):
+            topOfStack = topOfStack.split("&")
         exec("a = " + topOfStack)
         topOfStack = locals()["a"]
         
@@ -218,7 +222,11 @@ def runCommand(c):
             ",":printCharAt,
             "a":arrayInitFunctions,
             "A":arrayOperations,#array operations (maybe for matrices too)
-            "m":matrixInitFunctions
+            "m":matrixInitFunctions,
+            "S":selectFromArray,
+            "b":concatToPrintBuffer,
+            "B":printAndResetBuffer,
+            "i":printInteger
             
             }
     
@@ -369,14 +377,13 @@ def setPointer(arg):
             
 def prnt(arg):
     global topOfStack
+    global storage
+    global pointer
+    #print(arg)
     if(arg == None):
         print(topOfStack)
-    elif(arg == 0):
-        mint()
-        print(chr(topOfStack))
     else:
-        pass
-        #what to make it do?
+        print(storage[arg])
         
 def flag(arg):
     global outputAtEnd
@@ -402,13 +409,14 @@ def startLoop(arg):#unfinished
     if(arg == None): #case where the other bracket has an argument
         pass
     else:
+        #print(arg, topOfStack)
         if(not(arg == topOfStack)):
             #skip until the closing bracket
             while(commands[currentCommandIndex][0] != "]"):
                 currentCommandIndex += 1
+            currentCommandIndex -= 1
+        #if statement..... based on stuff in storage (with a flag or something)
         
-        #if statement..... based on stuff in storage
-        pass
     
 def endLoop(arg):#unfinished?
     #global loopStart
@@ -434,7 +442,7 @@ def endLoop(arg):#unfinished?
         commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", str(int(pointer)))    
     
     if(arg == None): #case where the other bracket has arg (i.e. if statement)
-        pass
+        del loopList[-1]
     elif(arg == 1):
         
         commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
@@ -615,7 +623,47 @@ def matrixInitFunctions(arg):
     
                 
             
-    
+def selectFromArray(arg):
+    global storage
+    global pointer
+    global topOfStack
+
+    if(arg == None):
+        topOfStack = storage[pointer][0]
+    else:
+        topOfStack = storage[pointer][arg]
+        
+        
+def concatToPrintBuffer(arg):
+    global printBuffer
+    global topOfStack
+    global storage
+    global pointer
+    #print("here", arg)
+    if(arg == None):
+        printBuffer += str(topOfStack)
+    else:
+        printBuffer += str(storage[arg])
+
+
+def printAndResetBuffer(arg):
+    global printBuffer
+    if(arg == None):
+        if(printBuffer != ""):
+            print(printBuffer)
+            printBuffer = ""
+    else:
+        pass #what to do here?
+        
+def printInteger(arg):
+    global topOfStack
+    global storage
+    global pointer
+    #print(arg)
+    if(arg == None):
+        print(int(topOfStack))
+    else:
+        print(int(storage[arg]))
     
         
     
