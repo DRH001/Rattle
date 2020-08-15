@@ -1,7 +1,7 @@
-# DENSE
+# Rattle
 A new esoteric programming language
 
-`DENSE` is just a placeholder name - suggestions would be appreciated!
+`Rattle` is just a placeholder name - suggestions would be appreciated (although I may end up keeping this, as this is built off of Python)
 
 This language uses a very particular format:
 
