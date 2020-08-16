@@ -8,7 +8,26 @@ Created on Thu Aug 13 08:48:37 2020
 
 
 
+"""
+to do:
+    
+    make a function to automatically store an array in memory and move the pointer to the next value
+    make else statements? or maybe just not statements? <-- which can act as else statements (make it use an argflag?)
+"""
 
+
+"""
+quick programs:
+    
+    see CGSE for fizzbuzz
+    w is hello world
+    |!-s+>s[g<%~[0pq]g-s>]~p2 checks to see if input is prime https://codegolf.stackexchange.com/questions/57617/is-this-number-a-prime
+    |[0q][p]0 does this https://codegolf.stackexchange.com/questions/62732/implement-a-truth-machine
+    | cat https://codegolf.stackexchange.com/questions/62230/simple-cat-program (note: |p is NOT a cat program, because the input gets parsed when main is not empty)
+    
+
+
+"""
 
 
 
@@ -76,7 +95,10 @@ def parse(code):
         else:
             topOfStack = main.split("|")[0]
             
-        main = main.split("|")[1]    
+        main = main.split("|")[1]
+        if(main == ""):
+            print(topOfStack)
+            return
     else:
         outputAtEnd = False
         
@@ -240,7 +262,8 @@ def runCommand(c):
             "S":selectFromArray,
             "b":concatToPrintBuffer,
             "B":printAndResetBuffer,
-            "i":printInteger
+            "i":printInteger,
+            "q":quitProgram
             
             }
     
@@ -446,15 +469,23 @@ def concat(arg):
 
 def startLoop(arg):
     #starts the loop - given an arg, only runs what's inside the loop iff the value on the stack is equal to the arg
+    #if argFlag (i.e. ^) then it's an inverted if statement
     global currentCommandIndex
     global storage
     global loopList
     global commands
     global currentCommandIndex
+    global argFlag
     #loopStart = currentCommandIndex
     loopList.append(currentCommandIndex)###
     if(arg == None): #case where the other bracket has an argument
         pass
+    elif(argFlag):
+        if(arg == topOfStack):
+            #skip until the closing bracket
+            while(commands[currentCommandIndex][0] != "]"):
+                currentCommandIndex += 1
+            currentCommandIndex -= 1
     else:
         #print(arg, topOfStack)
         if(not(arg == topOfStack)):
@@ -648,7 +679,7 @@ def arrayInitFunctions(arg):
 
 def arrayOperations(arg):#unfinished
     #might use second arg
-    #cycle, shift, reverse, +-*/%, RREF, linearly independant, max/min, max/min per each column/row, average/mode,
+    #cycle, shift, reverse, +-*/%, RREF, linearly independant, max/min, max/min per each column/row, average/mode, sum
     
     global topOfStack
     global secondArg
@@ -743,5 +774,19 @@ def printInteger(arg):
         print(int(storage[arg]))
     
         
+def quitProgram(arg):
+    global currentCommandIndex
+    if(arg == None):
+        currentCommandIndex += 2147483647
+        
+       
+def storeInput(arg):
+    pass
+    #stores top of stack starting at current pointer [if an array, stores each item in individual memory slots], sets pointer to slot after and gets value in this slot 
+    #given an arg, does the same thing but starting at arg instead of pointer
     
+def getArray(arg):
+    pass
+    #gets the next arg memory slots and creates an array with them    
+        
 
