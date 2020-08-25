@@ -3,7 +3,7 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 0.1.0
+@version: 0.2.0
 """
 
 
@@ -19,16 +19,29 @@ to do:
 """
 quick programs:
     
-    see CGSE for fizzbuzz
+    Fizz&Buzz|!I[g+R1bs%3[0b0b^0]g%5[0b1b^0]B]100 is FizzBuzz - alternatively:  Fizz&Buzz|!sSs1S1s2P3[g+R1bs%3[0b1b^0]g%5[0b2b^0]B]100
     w is hello world
-    |!-s+>s[g<%~[0pq]g-s>]~p2 checks to see if input is prime https://codegolf.stackexchange.com/questions/57617/is-this-number-a-prime
+    |[1=q]!-s+>s[g<%~[0=pq]g-s>]~=1p checks to see if input is prime https://codegolf.stackexchange.com/questions/57617/is-this-number-a-prime
     |[0q][p]0 does this https://codegolf.stackexchange.com/questions/62732/implement-a-truth-machine
     | cat https://codegolf.stackexchange.com/questions/62230/simple-cat-program (note: |p is NOT a cat program, because the input gets parsed when main is not empty)
-    
+    |s>s[0+q][g-s<*~s>]~ or |I2<[0+q][g-s<*~s>]~   ->  factorial (old:   |s>-s[0+q][<*~s>g-s]~<g     )
 
 
 """
 
+"""
+For input:
+    input must come before the | (might not have any |'s)
+    if you want multiple inputs, use an & as a separator (it will automatically create an array and parse what type everything should be)
+    if you want to concatenate hard-coded input with user input (or just take only some items as user input), use a \
+        example: \&potato\&2\ hard-coded and yes&2, es, 4 as user inputs, will give ["yes", 2, "potatoes", 24]
+    NOTE: there are no escape characters (e.g. \n) or quotation marks (",') that can be taken as input in any way unless you double them.
+        ^if doubled, you can always trim a string by reformatting using R21 to get rid of the excess quotation marks <- e.g. ""test""|R21 --> "test"
+
+
+
+
+"""
 
 
 def parse(code):
@@ -101,18 +114,34 @@ def parse(code):
             return
     else:
         outputAtEnd = False
-        
-    try:#auto-parses the input as what it should be
-        if("&" in str(topOfStack)):
-            topOfStack = topOfStack.split("&")
-        exec("a = " + topOfStack)
-        topOfStack = locals()["a"]
-        
-        
+
+
+    for char in topOfStack:
+        if(char == '\\'):
+            topOfStack = topOfStack.replace("\\", input(),1)
+
+
+    temp1 = []#auto-parses the input as what it should be
+    temp2 = None
+    try:
+        topOfStack = topOfStack.split("&")
+        for elem in topOfStack:
+            try:
+                exec("a = " + str(elem))
+                temp2 = locals()["a"]
+            except:
+                temp2 = elem
+            temp1.append(temp2)
+        topOfStack = temp1
     except:
-        pass    
+        try:
+            exec("a = " + str(topOfStack))
+            topOfStack = locals()["a"]
+        except:
+            pass
 
-
+    if(len(topOfStack) == 1):
+        topOfStack = topOfStack[0]
 
     functions = pieces[1::]
 
@@ -263,7 +292,8 @@ def runCommand(c):
             "b":concatToPrintBuffer,
             "B":printAndResetBuffer,
             "i":printInteger,
-            "q":quitProgram
+            "q":quitProgram,
+            "I":storeInput
             
             }
     
@@ -300,10 +330,10 @@ def mint(sigdigs=0):
  
 def mstr(arg=0):
     global topOfStack
-    if(arg == 0):
+    if(arg == 0 or arg == None):
         topOfStack = str(topOfStack) 
     else:
-        topOfStack = topOfStack[arg:(-arg+1)]
+        topOfStack = topOfStack[arg:-(arg)]
     
 def mfloat(sigdigs=0):
     global topOfStack
@@ -427,11 +457,12 @@ def pointerDown(arg):
             pointer -= 1
         else:
             pointer = 99
-    else: 
-        if(pointer != 0):
-            pointer -= 1
-        else:
-            pointer = 99
+    else:
+        for i in range(arg):
+            if(pointer != 0):
+                pointer -= 1
+            else:
+                pointer = 99
 
             
 def setPointer(arg):
@@ -498,6 +529,7 @@ def startLoop(arg):
     
 def endLoop(arg):
     #ends the loop - given an arg, this will loop arg times
+    #given a ^, will loop the number of times specified by the value at arg in storage
     global loopEnd
     global currentCommandIndex
     global commands
@@ -518,6 +550,8 @@ def endLoop(arg):
         commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", str(int(storage[pointer])))
     elif("@" in commands[currentCommandIndex]):
         commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", str(int(pointer)))    
+    elif("^" in commands[currentCommandIndex]):
+        commands[currentCommandIndex] = "]" + str(int(storage[arg]))      
     
     if(arg == None): #case where the other bracket has arg (i.e. if statement)
         del loopList[-1]
@@ -781,9 +815,39 @@ def quitProgram(arg):
         
        
 def storeInput(arg):
-    pass
+    global topOfStack
+    global pointer
+    global argFlag
+    global storage
+    
+    try:
+        oldTopOfStack = topOfStack
+        topOfStack = [topOfStack]
+    except:
+        pass
+    if(argFlag):
+        if(arg == None):
+            for elem in topOfStack:
+                storage[pointer] = elem
+                pointer -= 1
+        else:
+            for i in range(arg):
+                for elem in topOfStack:
+                    storage[pointer] = elem
+                    pointer -= 1
+    elif(arg == None):
+        for elem in topOfStack:
+            storage[pointer] = elem
+            pointer += 1
+    else:
+        for i in range(arg):
+            for elem in topOfStack:
+                storage[pointer] = elem
+                pointer += 1
+                
+    topOfStack = oldTopOfStack            
     #stores top of stack starting at current pointer [if an array, stores each item in individual memory slots], sets pointer to slot after and gets value in this slot 
-    #given an arg, does the same thing but starting at arg instead of pointer
+    #given an arg, does the same thing but arg times
     
 def getArray(arg):
     pass
