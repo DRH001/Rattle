@@ -75,11 +75,11 @@ Going from left to right,
                 + adds one to the top of the stack
                   > moves the pointer right
                     s saves the top of the stack at the current pointer (1)
-                      \[ starts a for loop (it's a for loop because the argument, ~ is on the closing bracket
+                      [ starts a for loop (it's a for loop because the argument, ~ is on the closing bracket
                          g gets the value at the current pointer (1)
                            < moves the pointer left
     %~ takes the modulo of the top of the stack with respect to the value in storage at the current pointer
-       \[0 checks to see if the result of this calculation is zero. If it is, then the code inside the square brackets will execute
+       [0 checks to see if the result of this calculation is zero. If it is, then the code inside the square brackets will execute
            = sets the value at the pointer to zero
              q stops execution, the top of the stack is printed implicitly
                ] ends the if statement
