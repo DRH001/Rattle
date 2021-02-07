@@ -88,4 +88,4 @@ Going from left to right,
                      s saves the top of the stack at the current pointer (0)
                        > moves the pointer right
                          ]~ ends the for loop (it executes the number of times of the value in storage at the current pointer)
-                            =1 sets the value on top of the stack to one, which is then printed implicitly```
+                            =1 sets the value on top of the stack to one, which is then printed implicitly
