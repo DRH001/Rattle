@@ -49,3 +49,43 @@ In Rattle, there are many commands you can use:
 
 You can also make use of arguments other than just numbers: You can use ~ to pass the value in storage at the current pointer, \` to pass the value at the top of the stack, and @ to pass the value of the pointer itself.
 
+
+
+
+Sample program
+=
+
+Here's a sample program which takes the user's input and determines whether it is a prime number:
+
+            |[1=q]-s+>s[g<%~[0=q]g-s>]~=1
+            
+In a more expanded, human-readable form, this looks like this:
+
+            | [1 = q ]  - s + > s  [ g < %~ [0 = q ]  g - s > ]~ =1
+            
+Going from left to right,
+
+| takes the user's input and parses it
+  \[1 checks to see if the input is equal to one. If it is, then the code inside the square brackets will execute
+      = sets the value at the pointer to zero
+        q stops execution, the top of the stack is printed implicitly
+          ] ends the if statement
+            - subtracts one from the top of the stack
+              s saves the top of the stack at the current pointer (0)
+                + adds one to the top of the stack
+                  > moves the pointer right
+                    s saves the top of the stack at the current pointer (1)
+                      \[ starts a for loop (it's a for loop because the argument, ~ is on the closing bracket
+                         g gets the value at the current pointer (1)
+                           < moves the pointer left
+    %~ takes the modulo of the top of the stack with respect to the value in storage at the current pointer
+       \[0 checks to see if the result of this calculation is zero. If it is, then the code inside the square brackets will execute
+           = sets the value at the pointer to zero
+             q stops execution, the top of the stack is printed implicitly
+               ] ends the if statement
+                 g gets the value at the current pointer (0)
+                   - subtracts one from the top of the stack
+                     s saves the top of the stack at the current pointer (0)
+                       > moves the pointer right
+                         ]~ ends the for loop (it executes the number of times of the value in storage at the current pointer)
+                            =1 sets the value on top of the stack to one, which is then printed implicitly
