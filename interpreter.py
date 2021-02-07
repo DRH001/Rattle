@@ -3,13 +3,17 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 0.2.0
+@version: 0.3.0
 """
 
 
 
 """
 to do:
+    
+    debug function! 
+    
+    
     
     make a function to automatically store an array in memory and move the pointer to the next value
     make else statements? or maybe just not statements? <-- which can act as else statements (make it use an argflag?)
@@ -24,6 +28,13 @@ quick programs:
     |[1=q]!-s+>s[g<%~[0=pq]g-s>]~=1p checks to see if input is prime https://codegolf.stackexchange.com/questions/57617/is-this-number-a-prime
     |[0q][p]0 does this https://codegolf.stackexchange.com/questions/62732/implement-a-truth-machine
     | cat https://codegolf.stackexchange.com/questions/62230/simple-cat-program (note: |p is NOT a cat program, because the input gets parsed when main is not empty)
+    
+    
+    
+    
+    
+    
+    
     |s>s[0+q][g-s<*~s>]~ or |I2<[0+q][g-s<*~s>]~   ->  factorial (old:   |s>-s[0+q][<*~s>g-s]~<g     )
 
 
@@ -42,6 +53,8 @@ For input:
 
 
 """
+   
+
 
 
 def parse(code):
@@ -65,6 +78,29 @@ def parse(code):
     global argFlag
     global printBuffer
     global argFlag2
+    global functions
+    global commands
+    global currentCommandIndex
+    global skipTo
+    global endFunctionFlag
+    global inFunction
+    global functionCommandList
+    global currentCommandIndexF
+    global currentFunction
+    global commandsCopyF
+    
+    
+    
+    currentFunction = -1
+    currentCommandIndexF = []
+    functionCommandList = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]] #this is the limit for no. of fns
+    commandsCopyF = functionCommandList
+    
+    inFunction = False
+    
+    endFunctionFlag = False
+    
+    skipTo = []
     
     currentCommandIndex = 0
     #loopStart = 0
@@ -95,6 +131,7 @@ def parse(code):
     
     '''
 
+    code = code.replace(" ","")
     pieces = code.split(";")
 
     main = pieces[0]
@@ -112,13 +149,16 @@ def parse(code):
         if(main == ""):
             print(topOfStack)
             return
+        
+        for char in topOfStack:
+            if(char == '\\'):
+                topOfStack = topOfStack.replace("\\", input(),1)
+                
     else:
         outputAtEnd = False
 
 
-    for char in topOfStack:
-        if(char == '\\'):
-            topOfStack = topOfStack.replace("\\", input(),1)
+
 
 
     temp1 = []#auto-parses the input as what it should be
@@ -133,6 +173,9 @@ def parse(code):
                 temp2 = elem
             temp1.append(temp2)
         topOfStack = temp1
+        
+        if(len(topOfStack) == 1):
+            topOfStack = topOfStack[0]
     except:
         try:
             exec("a = " + str(topOfStack))
@@ -140,8 +183,7 @@ def parse(code):
         except:
             pass
 
-    if(len(topOfStack) == 1):
-        topOfStack = topOfStack[0]
+    
 
     functions = pieces[1::]
 
@@ -171,10 +213,18 @@ def parse(code):
         #    pass
         #runCommand(command)
         
+    from time import perf_counter as currentTime 
+    start = currentTime()    
         
+    
     while(currentCommandIndex < len(commands)):
         runCommand(commands[currentCommandIndex])
         currentCommandIndex += 1
+        
+        if(currentCommandIndex % 100 == 0):
+            if(currentTime() > start + 5):
+                print("Program timed out. Did you forget your exit condition?")
+                break
         
   
     
@@ -293,12 +343,90 @@ def runCommand(c):
             "B":printAndResetBuffer,
             "i":printInteger,
             "q":quitProgram,
-            "I":storeInput
+            "I":storeInput,
+            "f":executeFunction,
+            "d":debugIndex
             
             }
     
     #exec(functionDict(func) + "(" +str(arg)+")")
     (functionDict[func])(arg)
+    
+    
+    
+    #maybe make a function run inside a VM - call parser again?
+    #(still partially under construction)
+    #add a flag which can order a function to run locally - i.e. not affecting main memory
+    #calling 'f' without an argument ends the current function
+def executeFunction(functionIndex):
+    global inFunction
+    global functions
+    global commands
+    global skipTo
+    global currentCommandIndex
+    global endFunctionFlag
+    global commandsCopyF
+    global functionCommandList
+    global currentCommandIndexF
+    global currentFunction
+    
+    inFunction = True
+    currentFunction = functionIndex
+    #print("function: ", functionIndex)
+    
+    if(functionIndex == None):
+        endFunctionFlag = True
+        #currentCommandIndex = skipTo.pop(-1)
+        #print("skipTo after pop: ", skipTo)
+    else:
+    
+        functionCommandList[currentFunction] = getCommandList(functions[functionIndex],1)
+        commandsCopyF[currentFunction] = getCommandList(functions[functionIndex],1)
+        
+        
+        
+        from time import perf_counter as currentTime 
+        start = currentTime() 
+    
+        currentCommandIndexF.append(0)
+        while(currentCommandIndexF[-1] < len(functionCommandList[currentFunction])):
+            
+            if(endFunctionFlag):
+                endFunctionFlag = False
+                break
+                
+            inFunction = True
+            runCommand(functionCommandList[currentFunction][currentCommandIndexF[-1]])
+            currentCommandIndexF[-1] += 1
+        
+            if(currentCommandIndexF[-1] % 100 == 0):
+                if(currentTime() > start + 5):
+                    print("Program timed out. Did you forget your exit condition?")
+                    break
+            
+            currentFunction = functionIndex
+            
+        #print("done function: ", functionIndex)
+        #print(functionCommandList, currentCommandIndexF)
+        currentCommandIndexF.pop(-1)
+        #for i in range(len(skipTo)):
+        #    skipTo[i] += len(functionCommandList)
+        
+        #skipTo.append(currentCommandIndex + len(functionCommandList))
+        #print("skipTo: ", skipTo)
+            
+            
+        #for i in range(len(functionCommandList)):
+        #    commands.insert(currentCommandIndex + 1 + i, functionCommandList[i])
+    
+    #print(commands)
+    
+    #don't parse a function - insert its operations into queue         
+    inFunction = False
+    
+def debugIndex(arg):
+    print("d" + str(arg) + " has been executed")
+    
     
 def reformat(arg):
     fmt = str(arg)
@@ -537,41 +665,73 @@ def endLoop(arg):
     global pointer
     global storage
     global topOfStack
+    global inFunction
+    global currentCommandIndexF
+    global functionCommandList
+    global commandsCopyF
    
     #print("test ", commands[currentCommandIndex])
     #print("test ", loopList, commands[currentCommandIndex])
     #print(commands)
     
-
+    if(inFunction == False):
     
-    if("`" in commands[currentCommandIndex]):
-        commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", str(int(topOfStack) + 1))
-    elif("~" in commands[currentCommandIndex]):
-        commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", str(int(storage[pointer])))
-    elif("@" in commands[currentCommandIndex]):
-        commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", str(int(pointer)))    
-    elif("^" in commands[currentCommandIndex]):
-        commands[currentCommandIndex] = "]" + str(int(storage[arg]))      
-    
-    if(arg == None): #case where the other bracket has arg (i.e. if statement)
-        del loopList[-1]
-    elif(arg == 1):
+        if("`" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", str(int(topOfStack) + 1))
+        elif("~" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", str(int(storage[pointer])))
+        elif("@" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", str(int(pointer)))    
+        elif("^" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = "]" + str(int(storage[arg]))      
         
-        commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
-        #print(commands)
-        del loopList[-1]
-        #commands = commandsCopy##
+        if(arg == None): #case where the other bracket has arg (i.e. if statement)
+            del loopList[-1]
+        elif(arg == 1):
+            
+            commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
+            #print(commands)
+            del loopList[-1]
+            #commands = commandsCopy##
+            
+            #print("here")
+            #return
+            #commands.pop(currentCommandIndex)
+        else:
+            #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
+            commands[currentCommandIndex] = commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::]) -1)
+            #currentCommandIndex = loopStart##
+            currentCommandIndex = loopList[-1]##
+            
+        #print("test ",loopList,  commands[currentCommandIndex], "\n")   
         
-        #print("here")
-        #return
-        #commands.pop(currentCommandIndex)
     else:
-        #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
-        commands[currentCommandIndex] = commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::]) -1)
-        #currentCommandIndex = loopStart##
-        currentCommandIndex = loopList[-1]##
+        if("`" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("`", str(int(topOfStack) + 1))
+        elif("~" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("~", str(int(storage[pointer])))
+        elif("@" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("@", str(int(pointer)))    
+        elif("^" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = "]" + str(int(storage[arg])) 
         
-    #print("test ",loopList,  commands[currentCommandIndex], "\n")   
+        if(arg == None): #case where the other bracket has arg (i.e. if statement)
+            del loopList[-1]
+        elif(arg == 1):
+            
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = commandsCopyF[currentFunction][currentCommandIndexF[-1]]
+            #print(commands)
+            del loopList[-1]
+            #commands = commandsCopy##
+            
+            #print("here")
+            #return
+            #commands.pop(currentCommandIndex)
+        else:
+            #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]][0] + str(int(functionCommandList[currentFunction][currentCommandIndexF[-1]][1::]) -1)
+            #currentCommandIndex = loopStart##
+            currentCommandIndexF[-1] = loopList[-1]##
                 
     
 def modulo(arg):
