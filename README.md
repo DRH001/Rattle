@@ -45,7 +45,7 @@ In Rattle, there are many commands you can use:
             "q":quitProgram,                    #force-stops execution
             "I":storeInput,                     #parses and stores input
             "f":executeFunction,                #executes functions - when used without an argument, acts as a return statement
-            "d":debugIndex #prints "d(arg) has been executed" - useful for debugging code
+            "d":debugIndex                      #prints "d(arg) has been executed" - useful for debugging code
 
 You can also make use of arguments other than just numbers: You can use ~ to pass the value in storage at the current pointer, \` to pass the value at the top of the stack, and @ to pass the value of the pointer itself.
 
