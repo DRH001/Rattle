@@ -12,39 +12,39 @@ To take input, your code simply needs the | character - data types are recognise
 
 In Rattle, there are many commands you can use:
 
-            "+":add, #adds argument to top of the stack
-            "-":subtract, #subtracts argument from top of the stack
-            "*":multiply, #multiplies top of the stack by argument
-            "/":divide, #divides top of the stack by argument
-            "w":helloWorld, #prints "Hello, World!"
-            "R":reformat #used to format data types
-            "s":store, #stores top of the stack onto the data tape at the current pointer
-            "g":get, #puts value at current pointer onto the top of the stack
-            "<":pointerDown, #moves pointer down (or to the left)
-            ">":pointerUp, #moves pointer up (or to the right)
-            "P":setPointer, #sets pointer to argument
-            "p":prnt, #prints item at the top of the stack
-            "!":flag, #(used internally)
-            "c":concat, #concatenates value at argument's pointer in storage to the top of the stack
-            "[":startLoop, #this is the start of a loop structure - any argument here acts as an if statement
-            "]":endLoop, #this is the end of a loop structure - any argument here acts as a for loop
-            "%":modulo, #takes the modulo of the top of the stack with respect to the argument
-            "$":swap, #swaps the top of the stack with the item in storage at the current pointer
-            "r":secondArgument, #(used internally)
-            "=":topOfStackEquals, #sets top of stack to argument
-            "_":pointedValueInStorageEquals, #sets value in storage at the pointer to argument
-            "t":stringFunction, #(currently in development)
-            ",":printCharAt, #prints the character of an int value
-            "a":arrayInitFunctions, #array functions (currently in development)
-            "A":arrayOperations #array operations (currently in development)
-            "m":matrixInitFunctions, #matrix functions (currently in development)
-            "S":selectFromArray, #selects n-th item from an array
-            "b":concatToPrintBuffer, #adds argument to a buffer
-            "B":printAndResetBuffer, #prints buffer and resets buffer
-            "i":printInteger, #prints value as int
-            "q":quitProgram, #force-stops execution
-            "I":storeInput, #parses and stores input
-            "f":executeFunction, #executes functions - when used without an argument, acts as a return statement
+            "+":add,                            #adds argument to top of the stack
+            "-":subtract,                       #subtracts argument from top of the stack
+            "*":multiply,                       #multiplies top of the stack by argument
+            "/":divide,                         #divides top of the stack by argument
+            "w":helloWorld,                     #prints "Hello, World!"
+            "R":reformat                        #used to format data types
+            "s":store,                          #stores top of the stack onto the data tape at the current pointer
+            "g":get,                            #puts value at current pointer onto the top of the stack
+            "<":pointerDown,                    #moves pointer down (or to the left)
+            ">":pointerUp,                      #moves pointer up (or to the right)
+            "P":setPointer,                     #sets pointer to argument
+            "p":prnt,                           #prints item at the top of the stack
+            "!":flag,                           #(used internally)
+            "c":concat,                         #concatenates value at argument's pointer in storage to the top of the stack
+            "[":startLoop,                      #this is the start of a loop structure - any argument here acts as an if statement
+            "]":endLoop,                        #this is the end of a loop structure - any argument here acts as a for loop
+            "%":modulo,                         #takes the modulo of the top of the stack with respect to the argument
+            "$":swap,                           #swaps the top of the stack with the item in storage at the current pointer
+            "r":secondArgument,                 #(used internally)
+            "=":topOfStackEquals,               #sets top of stack to argument
+            "_":pointedValueInStorageEquals,    #sets value in storage at the pointer to argument
+            "t":stringFunction,                 #(currently in development)
+            ",":printCharAt,                    #prints the character of an int value
+            "a":arrayInitFunctions,             #array functions (currently in development)
+            "A":arrayOperations                 #array operations (currently in development)
+            "m":matrixInitFunctions,            #matrix functions (currently in development)
+            "S":selectFromArray,                #selects n-th item from an array
+            "b":concatToPrintBuffer,            #adds argument to a buffer
+            "B":printAndResetBuffer,            #prints buffer and resets buffer
+            "i":printInteger,                   #prints value as int
+            "q":quitProgram,                    #force-stops execution
+            "I":storeInput,                     #parses and stores input
+            "f":executeFunction,                #executes functions - when used without an argument, acts as a return statement
             "d":debugIndex #prints "d(arg) has been executed" - useful for debugging code
 
 You can also make use of arguments other than just numbers: You can use ~ to pass the value in storage at the current pointer, \` to pass the value at the top of the stack, and @ to pass the value of the pointer itself.
