@@ -66,7 +66,7 @@ In a more expanded, human-readable form, this looks like this:
 Going from left to right,
 
 ```| takes the user's input and parses it
-  \[1 checks to see if the input is equal to one. If it is, then the code inside the square brackets will execute
+  [1 checks to see if the input is equal to one. If it is, then the code inside the square brackets will execute
       = sets the value at the pointer to zero
         q stops execution, the top of the stack is printed implicitly
           ] ends the if statement
