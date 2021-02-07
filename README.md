@@ -61,7 +61,7 @@ Here's a [sample program](https://tio.run/##7T39d9s2kr/rr0CoSyzakizJadOocZ00jd/l
             
 In a more expanded, human-readable form, this looks like this:
 
-            | [1 = q ]  - s + > s  [ g < %~ [0 = q ]  g - s > ]~ =1
+            | [1 = q ]  - s + > s  [ g < %~  [0 = q ]  g - s > ]~ =1
             
 Going from left to right,
 
