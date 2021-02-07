@@ -9,7 +9,7 @@ Rattle is a very versatile language - it works on a circular data tape, where yo
 
 In Rattle, there are many commands you can use:
 
- `           "+":add,
+            "+":add,
             "-":subtract,
             "*":multiply,
             "/":divide,
@@ -42,4 +42,4 @@ In Rattle, there are many commands you can use:
             "q":quitProgram,
             "I":storeInput,
             "f":executeFunction,
-            "d":debugIndex`
+            "d":debugIndex
