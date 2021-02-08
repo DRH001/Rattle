@@ -3,7 +3,7 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 0.3.0
+@version: 1.0.0
 """
 
 
@@ -29,6 +29,7 @@ quick programs:
     |[0q][p]0 does this https://codegolf.stackexchange.com/questions/62732/implement-a-truth-machine
     | cat https://codegolf.stackexchange.com/questions/62230/simple-cat-program (note: |p is NOT a cat program, because the input gets parsed when main is not empty)
     
+    better prime number checker: |f0;[1=f]-s+>s[g<%~[0=f]g-s>]~=1 <- better because you can actually add code after f0
     
     
     
@@ -239,7 +240,7 @@ def parse(code):
 
 def getCommandList(f,rep):
     
-    possibleArgs = "0123456789~`@&^?"# & represents a spacer in case some functions need lots of arguments
+    possibleArgs = "0123456789~`@&^?."# & represents a spacer in case some functions need lots of arguments
     #^ and ? are argument flags
     tempList = []
     
@@ -283,7 +284,10 @@ def runCommand(c):
     
     if(arg != ""):
         try:
-            arg = int(float(arg))
+            if("." in arg):
+                arg = float(arg)
+            else:
+                arg = int(float(arg))
         except:
             pass
     
@@ -369,17 +373,26 @@ def executeFunction(functionIndex):
     global functionCommandList
     global currentCommandIndexF
     global currentFunction
+    global loopList
     
     inFunction = True
-    currentFunction = functionIndex
+    
     #print("function: ", functionIndex)
     
     if(functionIndex == None):
         endFunctionFlag = True
+        
+        while(currentCommandIndexF[-1] < len(functionCommandList[currentFunction])):
+            if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
+                del loopList[-1]
+            if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
+                loopList.append(0)
+                
+            currentCommandIndexF[-1] += 1       
         #currentCommandIndex = skipTo.pop(-1)
         #print("skipTo after pop: ", skipTo)
     else:
-    
+        currentFunction = functionIndex
         functionCommandList[currentFunction] = getCommandList(functions[functionIndex],1)
         commandsCopyF[currentFunction] = getCommandList(functions[functionIndex],1)
         
@@ -635,25 +648,48 @@ def startLoop(arg):
     global commands
     global currentCommandIndex
     global argFlag
+    global inFunction
+    global currentCommandIndexF
+    global functionCommandList
     #loopStart = currentCommandIndex
-    loopList.append(currentCommandIndex)###
-    if(arg == None): #case where the other bracket has an argument
-        pass
-    elif(argFlag):
-        if(arg == topOfStack):
-            #skip until the closing bracket
-            while(commands[currentCommandIndex][0] != "]"):
-                currentCommandIndex += 1
-            currentCommandIndex -= 1
+    
+    if(not(inFunction)):
+        loopList.append(currentCommandIndex)###
+        if(arg == None): #case where the other bracket has an argument
+            pass
+        elif(argFlag):
+            if(arg == topOfStack):
+                #skip until the closing bracket
+                while(commands[currentCommandIndex] != "]"):
+                    currentCommandIndex += 1
+                currentCommandIndex -= 1
+        else:
+            #print(arg, topOfStack)
+            if(not(arg == topOfStack)):
+                #skip until the closing bracket
+                while(commands[currentCommandIndex] != "]"):
+                    currentCommandIndex += 1
+                currentCommandIndex -= 1
+            #if statement..... based on stuff in storage (with a flag or something)
     else:
-        #print(arg, topOfStack)
-        if(not(arg == topOfStack)):
-            #skip until the closing bracket
-            while(commands[currentCommandIndex][0] != "]"):
-                currentCommandIndex += 1
-            currentCommandIndex -= 1
-        #if statement..... based on stuff in storage (with a flag or something)
-        
+        loopList.append(currentCommandIndexF[currentFunction])        
+        if(arg == None): #case where the other bracket has an argument
+            pass
+        elif(argFlag):
+            if(arg == topOfStack):
+                #skip until the closing bracket
+                while(functionCommandList[currentFunction][currentCommandIndexF[-1]] != "]"):
+                    currentCommandIndexF[-1] += 1
+                currentCommandIndexF[-1] -= 1
+        else:
+            #print(arg, topOfStack)
+            if(not(arg == topOfStack)):
+                #skip until the closing bracket
+                while(functionCommandList[currentFunction][currentCommandIndexF[-1]] != "]"):
+                    currentCommandIndexF[-1] += 1
+                currentCommandIndexF[-1] -= 1        
+                
+                
     
 def endLoop(arg):
     #ends the loop - given an arg, this will loop arg times
@@ -669,7 +705,7 @@ def endLoop(arg):
     global currentCommandIndexF
     global functionCommandList
     global commandsCopyF
-   
+    global loopList
     #print("test ", commands[currentCommandIndex])
     #print("test ", loopList, commands[currentCommandIndex])
     #print(commands)
