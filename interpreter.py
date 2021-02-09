@@ -3,7 +3,7 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.0.0
+@version: 1.0.1
 """
 
 
@@ -89,6 +89,7 @@ def parse(code):
     global currentCommandIndexF
     global currentFunction
     global commandsCopyF
+    global pieces
     
     
     
@@ -132,7 +133,7 @@ def parse(code):
     
     '''
 
-    code = code.replace(" ","")
+    #code = code.replace(" ","")
     pieces = code.split(";")
 
     main = pieces[0]
@@ -146,7 +147,7 @@ def parse(code):
         else:
             topOfStack = main.split("|")[0]
             
-        main = main.split("|")[1]
+        main = main.split("|")[1].replace(" ","")
         if(main == ""):
             print(topOfStack)
             return
@@ -159,7 +160,7 @@ def parse(code):
         outputAtEnd = False
 
 
-
+    
 
 
     temp1 = []#auto-parses the input as what it should be
@@ -188,6 +189,8 @@ def parse(code):
 
     functions = pieces[1::]
 
+    for i in range(len(functions)):
+        functions[i] = functions[i].replace(" ","")
 
         
     try:
@@ -990,7 +993,6 @@ def printAndResetBuffer(arg):
             printBuffer = []
     else:
         pass #what to do here?
-        
 def printInteger(arg):
     #given no arg, prints the top of the stack as an int
     #given an arg, prints the storage at arg as an int
