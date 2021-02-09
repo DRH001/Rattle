@@ -74,20 +74,20 @@ In a more expanded, human-readable form, this looks like this:
 Going from left to right,
 
 
-            | takes the user's input and parses it
-             f0; calls function 0 (which is everything after the semicolon)
-      [1 checks to see if the input is equal to one. If it is, then the code inside the square brackets will execute
-         = sets the value at the top of the stack to zero
-           f returns to the main method, the top of the stack is printed implicitly
-             ] ends the if statement
-               - subtracts one from the top of the stack
-                 s saves the top of the stack at the current pointer (0)
-                   + adds one to the top of the stack
-                     > moves the pointer right
-                       s saves the top of the stack at the current pointer (1)
-                         [ starts a for loop (it's a for loop because the argument, ~ is on the closing bracket
-                            g gets the value at the current pointer (1)
-                              < moves the pointer left
+    | takes the user's input and parses it
+     f0; calls function 0 (which is everything after the semicolon)
+        [1 checks to see if the input is equal to one. If it is, then the code inside the square brackets will execute
+           = sets the value at the top of the stack to zero
+             f returns to the main method, the top of the stack is printed implicitly
+               ] ends the if statement
+                 - subtracts one from the top of the stack
+                   s saves the top of the stack at the current pointer (0)
+                     + adds one to the top of the stack
+                       > moves the pointer right
+                         s saves the top of the stack at the current pointer (1)
+                           [ starts a for loop (it's a for loop because the argument, ~ is on the closing bracket
+                              g gets the value at the current pointer (1)
+                                < moves the pointer left
     %~ takes the modulo of the top of the stack with respect to the value in storage at the current pointer
        [0 checks to see if the result of this calculation is zero. If it is, then the code inside the square brackets will execute
            = sets the value at the top of the stack to zero
