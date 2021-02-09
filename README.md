@@ -73,9 +73,9 @@ In a more expanded, human-readable form, this looks like this:
             
 Going from left to right,
 
-```
-| takes the user's input and parses it
-  f0; calls function 0 (which is everything after the semicolon)
+
+            | takes the user's input and parses it
+             f0; calls function 0 (which is everything after the semicolon)
       [1 checks to see if the input is equal to one. If it is, then the code inside the square brackets will execute
          = sets the value at the top of the stack to zero
            f returns to the main method, the top of the stack is printed implicitly
