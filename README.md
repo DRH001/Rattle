@@ -99,6 +99,7 @@ Going from left to right,
                        > moves the pointer right
                          ]~ ends the for loop (it executes the number of times of the value in storage at the current pointer)
                             =1 sets the value on top of the stack to one - function 0 returns, the top of the stack is printed implicitly
+                            ```
 
 
 Upcoming releases
