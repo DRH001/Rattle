@@ -3,7 +3,9 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.0.1
+@version: 1.1.0
+
+Updated 2021-02-24 20:00 EST
 """
 
 
@@ -12,7 +14,9 @@ Created on Thu Aug 13 08:48:37 2020
 to do:
     
     debug function! 
-    
+    make concat use value at pointer if arg is blank (and take argflags to concat backwards)
+    make loops get value of ~ before going inside loop!
+    function to go from char to int and vice-versa
     
     
     make a function to automatically store an array in memory and move the pointer to the next value
@@ -26,8 +30,12 @@ quick programs:
     Fizz&Buzz|!I[g+R1bs%3[0b0b^0]g%5[0b1b^0]B]100 is FizzBuzz - alternatively:  Fizz&Buzz|!sSs1S1s2P3[g+R1bs%3[0b1b^0]g%5[0b2b^0]B]100
     w is hello world
     |[1=q]!-s+>s[g<%~[0=pq]g-s>]~=1p checks to see if input is prime https://codegolf.stackexchange.com/questions/57617/is-this-number-a-prime
-    |[0q][p]0 does this https://codegolf.stackexchange.com/questions/62732/implement-a-truth-machine
+    |[0q][p]0 does this: https://codegolf.stackexchange.com/questions/62732/implement-a-truth-machine
     | cat https://codegolf.stackexchange.com/questions/62230/simple-cat-program (note: |p is NOT a cat program, because the input gets parsed when main is not empty)
+    B&b&uffalo& |I=[b0[2b^b1]b2b3b1b2[3q]b3+]4 does this: https://codegolf.stackexchange.com/questions/218284/output-buffalo-buffalo-buffalo-buffalo-buffalo-buffalo-buffalo-buffalo
+    |IP0[gpP~]0 does this: https://codegolf.stackexchange.com/a/218879/95671
+    i+R`c0c0$[+i]~ does this: https://codegolf.stackexchange.com/a/219748/95671
+    
     
     better prime number checker: |f0;[1=f]-s+>s[g<%~[0=f]g-s>]~=1 <- better because you can actually add code after f0
     
@@ -90,8 +98,9 @@ def parse(code):
     global currentFunction
     global commandsCopyF
     global pieces
+    global intoLoopArgs
     
-    
+    intoLoopArgs = []
     
     currentFunction = -1
     currentCommandIndexF = []
@@ -235,7 +244,10 @@ def parse(code):
     #check for end flags: no output, output last character, etc
     
     if(outputAtEnd):
-        print(topOfStack)
+        if(printBuffer != []):
+            print("".join(printBuffer))
+        else:    
+            print(topOfStack)
 
 
 
@@ -511,9 +523,10 @@ def add(arg):#add arg to stack
     mfloat()
     if(arg==None):
         topOfStack += 1
-        return
-    topOfStack += arg
-
+    else:
+        topOfStack += arg
+    if(topOfStack == int(topOfStack)):
+        topOfStack = int(topOfStack)
     
 def subtract(arg):#subtract arg from stack
     #subtracts 1 from top of stack
@@ -522,9 +535,10 @@ def subtract(arg):#subtract arg from stack
     mfloat()
     if(arg==None):
         topOfStack -= 1
-        return
-    topOfStack -= arg  
-    
+    else:
+        topOfStack -= arg  
+    if(topOfStack == int(topOfStack)):
+        topOfStack = int(topOfStack)
     
 def divide(arg):#divide stack/arg
     #divides the top of stack by 2
@@ -534,25 +548,27 @@ def divide(arg):#divide stack/arg
     mfloat()
     if(arg==None):
         topOfStack /= 2
-        return
-    if(arg == 0):
+    elif(arg == 0):
         topOfStack /= 10
-        return
-    topOfStack /= arg    
+    else:
+        topOfStack /= arg
+    if(topOfStack == int(topOfStack)):
+        topOfStack = int(topOfStack)    
     
 def multiply(arg):#stack*=arg
     #multiplies the top of stack by 2
     #given 0 as arg, multiplies top of stack by 10
     #given other arg, multiplies top of stack by arg
     global topOfStack
-    mfloat()
+    #mfloat()
     if(arg==None):
         topOfStack *= 2
-        return
-    if(arg == 0):
+    elif(arg == 0):
         topOfStack *= 10
-        return
-    topOfStack *= arg  
+    else:
+        topOfStack *= arg  
+    if(type(topOfStack) != str and topOfStack == int(topOfStack)):
+        topOfStack = int(topOfStack)
      
     
 def store(arg):#if the arg is None, it should instead use the current pointer
@@ -639,9 +655,15 @@ def concat(arg):
     #concatenates the value at arg to the top of the stack
     global storage
     global topOfStack
-    topOfStack = str(topOfStack) + str(storage[arg])   
+    global pointer
+    
+    if(arg == None):
+        topOfStack = str(topOfStack) + str(storage[pointer])
+    else:
+        topOfStack = str(topOfStack) + str(storage[arg])   
 
 
+import copy
 def startLoop(arg):
     #starts the loop - given an arg, only runs what's inside the loop iff the value on the stack is equal to the arg
     #if argFlag (i.e. ^) then it's an inverted if statement
@@ -655,6 +677,18 @@ def startLoop(arg):
     global currentCommandIndexF
     global functionCommandList
     #loopStart = currentCommandIndex
+    global intoLoopArgs
+    global topOfStack
+    global pointer
+    
+    try:
+        intoLoopArgs.append([str(int(topOfStack)), str(int(storage[pointer])), str(int(pointer)), copy.deepcopy(storage)])
+    except:
+        try:
+            intoLoopArgs.append([0, str(int(storage[pointer])), str(int(pointer)), copy.deepcopy(storage)])
+        except:
+            print("Unhandled error. Please send your code to rattleinterpreter@gmail.com and a fix will be issued soon!")
+    
     
     if(not(inFunction)):
         loopList.append(currentCommandIndex)###
@@ -709,12 +743,13 @@ def endLoop(arg):
     global functionCommandList
     global commandsCopyF
     global loopList
+    global intoLoopArgs
     #print("test ", commands[currentCommandIndex])
     #print("test ", loopList, commands[currentCommandIndex])
     #print(commands)
     
     if(inFunction == False):
-    
+        '''
         if("`" in commands[currentCommandIndex]):
             commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", str(int(topOfStack) + 1))
         elif("~" in commands[currentCommandIndex]):
@@ -723,6 +758,22 @@ def endLoop(arg):
             commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", str(int(pointer)))    
         elif("^" in commands[currentCommandIndex]):
             commands[currentCommandIndex] = "]" + str(int(storage[arg]))      
+        '''
+        
+        
+        
+        if("`" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", intoLoopArgs[-1][0])
+        elif("~" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", intoLoopArgs[-1][1])
+        elif("@" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", intoLoopArgs[-1][2])    
+        elif("^" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = "]" + str(int(intoLoopArgs[-1][3][arg]))
+        
+        
+        
+        
         
         if(arg == None): #case where the other bracket has arg (i.e. if statement)
             del loopList[-1]
@@ -731,6 +782,7 @@ def endLoop(arg):
             commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
             #print(commands)
             del loopList[-1]
+            del intoLoopArgs[-1]
             #commands = commandsCopy##
             
             #print("here")
@@ -745,14 +797,30 @@ def endLoop(arg):
         #print("test ",loopList,  commands[currentCommandIndex], "\n")   
         
     else:
+        
         if("`" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("`", str(int(topOfStack) + 1))
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("`", intoLoopArgs[-1][0])
         elif("~" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("~", str(int(storage[pointer])))
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("~", intoLoopArgs[-1][1])
         elif("@" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("@", str(int(pointer)))    
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("@", intoLoopArgs[-1][2])    
         elif("^" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = "]" + str(int(storage[arg])) 
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = "]" + intoLoopArgs[-1][3][arg] 
+        
+        '''
+        if("`" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", intoLoopArgs[-1][0])
+        elif("~" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", intoLoopArgs[-1][1])
+        elif("@" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", intoLoopArgs[-1][2])    
+        elif("^" in commands[currentCommandIndex]):
+            commands[currentCommandIndex] = "]" + str(int(intoLoopArgs[-1][3][arg]))
+        '''
+       
+        
+        
+        
         
         if(arg == None): #case where the other bracket has arg (i.e. if statement)
             del loopList[-1]
@@ -761,6 +829,7 @@ def endLoop(arg):
             functionCommandList[currentFunction][currentCommandIndexF[-1]] = commandsCopyF[currentFunction][currentCommandIndexF[-1]]
             #print(commands)
             del loopList[-1]
+            del intoLoopArgs[-1]
             #commands = commandsCopy##
             
             #print("here")
@@ -992,7 +1061,9 @@ def printAndResetBuffer(arg):
             print("".join(printBuffer))
             printBuffer = []
     else:
-        pass #what to do here?
+        print(("".join(printBuffer)) * arg)
+        printBuffer = []
+        
 def printInteger(arg):
     #given no arg, prints the top of the stack as an int
     #given an arg, prints the storage at arg as an int
@@ -1020,7 +1091,7 @@ def storeInput(arg):
     
     try:
         oldTopOfStack = topOfStack
-        topOfStack = [topOfStack]
+        #topOfStack = [topOfStack]
     except:
         pass
     if(argFlag):
