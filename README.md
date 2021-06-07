@@ -107,4 +107,5 @@ Going from left to right,
 Upcoming releases
 =
 
+Raising exceptions!
 Want to see your ideas implemented? Email [rattleinterpreter@gmail.com](mailto:rattleinterpreter@gmail.com)
