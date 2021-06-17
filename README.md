@@ -9,6 +9,7 @@ What's New
 Rattle has now officially been released! Rattle is now an imperative language - it's now actually useful for normal programming!
 
 Version 1.1.1: small fixes and optimizations
+
 In version 1.1.0, loops work slightly differently (they now work more like how loops work in normal languages - see the changelog for more details)
 
 Description
