@@ -3,9 +3,9 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.1.1
+@version: 1.1.2
 
-Updated 2021-02-24 20:00 EST
+Updated 2021-06-16 21:00 EST
 """
 
 
@@ -167,6 +167,7 @@ def parse(code):
                 
     else:
         outputAtEnd = False
+        main = main.replace(" ","").replace("\n","")
 
 
     
