@@ -3,7 +3,7 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.1.0
+@version: 1.1.1
 
 Updated 2021-02-24 20:00 EST
 """
@@ -156,7 +156,7 @@ def parse(code):
         else:
             topOfStack = main.split("|")[0]
             
-        main = main.split("|")[1].replace(" ","")
+        main = main.split("|")[1].replace(" ","").replace("\n","")
         if(main == ""):
             print(topOfStack)
             return
@@ -628,7 +628,11 @@ def pointerDown(arg):
 def setPointer(arg):
     #sets the pointer to the arg
     global pointer
-    pointer = int(arg)            
+    
+    if(arg == None):
+        pointer = 0
+    else:
+        pointer = int(arg)            
             
             
 def prnt(arg):
@@ -682,10 +686,10 @@ def startLoop(arg):
     global pointer
     
     try:
-        intoLoopArgs.append([str(int(topOfStack)), str(int(storage[pointer])), str(int(pointer)), copy.deepcopy(storage)])
+        intoLoopArgs.append([topOfStack, storage[pointer], pointer, copy.deepcopy(storage)])
     except:
         try:
-            intoLoopArgs.append([0, str(int(storage[pointer])), str(int(pointer)), copy.deepcopy(storage)])
+            intoLoopArgs.append([0, storage[pointer], pointer, copy.deepcopy(storage)])
         except:
             print("Unhandled error. Please send your code to rattleinterpreter@gmail.com and a fix will be issued soon!")
     
@@ -906,10 +910,16 @@ def printCharAt(arg):
     global topOfStack
     global storage
     global pointer
-    if(arg == None):
-        print(chr(int(topOfStack)))
-        return
-    print(chr(int(storage[pointer])))
+    if(argFlag):
+        if(arg == None):
+            print(chr(int(topOfStack)))
+            return
+        print(chr(int(storage[pointer])))
+    else:    
+        if(arg == None):
+            print(chr(int(topOfStack)), end="")
+            return
+        print(chr(int(storage[pointer])), end="")
     
     
 def arrayInitFunctions(arg):
