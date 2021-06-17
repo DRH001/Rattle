@@ -113,6 +113,8 @@ Raising exceptions!
 
 ASCII codes
 
+Randomness
+
 Array/list functions
 
 Want to see your ideas implemented? Email [rattleinterpreter@gmail.com](mailto:rattleinterpreter@gmail.com)
