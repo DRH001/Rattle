@@ -3,9 +3,9 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.1.2
+@version: 1.1.3
 
-Updated 2021-06-16 21:00 EST
+Updated 2021-06-22 01:00 EST
 """
 
 
@@ -768,11 +768,11 @@ def endLoop(arg):
         
         
         if("`" in commands[currentCommandIndex]):
-            commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", intoLoopArgs[-1][0])
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", str(intoLoopArgs[-1][0]))
         elif("~" in commands[currentCommandIndex]):
-            commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", intoLoopArgs[-1][1])
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", str(intoLoopArgs[-1][1]))
         elif("@" in commands[currentCommandIndex]):
-            commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", intoLoopArgs[-1][2])    
+            commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", str(intoLoopArgs[-1][2]))    
         elif("^" in commands[currentCommandIndex]):
             commands[currentCommandIndex] = "]" + str(int(intoLoopArgs[-1][3][arg]))
         
@@ -804,11 +804,11 @@ def endLoop(arg):
     else:
         
         if("`" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("`", intoLoopArgs[-1][0])
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("`", str(intoLoopArgs[-1][0]))
         elif("~" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("~", intoLoopArgs[-1][1])
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("~", str(intoLoopArgs[-1][1]))
         elif("@" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("@", intoLoopArgs[-1][2])    
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("@", str(intoLoopArgs[-1][2]))    
         elif("^" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
             functionCommandList[currentFunction][currentCommandIndexF[-1]] = "]" + intoLoopArgs[-1][3][arg] 
         
