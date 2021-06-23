@@ -3,9 +3,9 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.1.3
+@version: 1.1.4
 
-Updated 2021-06-22 01:00 EST
+Updated 2021-06-23 12:00 EST
 """
 
 
@@ -1083,9 +1083,14 @@ def printInteger(arg):
     global pointer
     #print(arg)
     if(arg == None):
-        print(int(topOfStack))
-    else:
+        if(type(topOfStack)==str or type(topOfStack)==chr):
+            print(ord(str(topOfStack)))
+        else:
+            print(int(topOfStack))
+    elif(type(topOfStack)==int):
         print(int(storage[arg]))
+    elif(type(topOfStack)==str or type(topOfStack)==chr):
+        print(ord(str(storage[arg])))
     
         
 def quitProgram(arg):
