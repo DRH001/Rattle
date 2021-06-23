@@ -365,7 +365,8 @@ def runCommand(c):
             "q":quitProgram,
             "I":storeInput,
             "f":executeFunction,
-            "d":debugIndex
+            "d":debugIndex,
+            "n":getInteger
             
             }
     
@@ -1091,6 +1092,21 @@ def printInteger(arg):
         print(int(storage[arg]))
     elif(type(topOfStack)==str or type(topOfStack)==chr):
         print(ord(str(storage[arg])))
+        
+def getInteger(arg):        
+    global topOfStack
+    global storage
+    global pointer
+    #print(arg)
+    if(arg == None):
+        if(type(topOfStack)==str or type(topOfStack)==chr):
+            topOfStack = (ord(str(topOfStack)))
+        else:
+            topOfStack = (int(topOfStack))
+    elif(type(topOfStack)==int):
+        topOfStack = (int(storage[arg]))
+    elif(type(topOfStack)==str or type(topOfStack)==chr):
+        topOfStack = (ord(str(storage[arg])))        
     
         
 def quitProgram(arg):
