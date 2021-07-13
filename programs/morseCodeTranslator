@@ -1,0 +1,9 @@
+\&['.-','-...','-.-.','-..','.','..-.','--.','....','..','.---','-.-','.-..','--','-.','---','.--.','--.-','.-.','...','-','..-','...-','.--','-..-','-.--','--..']|!
+>> I P2 g I^ P s [f0]~;  P2 g < I~ n -97 P4 s < g > I~ p P1 g+s
+
+
+
+
+
+
+;The above code takes a lower-case word (i.e. no spaces, punctuation) as input and outputs the word in morse code.
