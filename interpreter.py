@@ -1,11 +1,12 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.1.4
+@version: 1.1.5
 
-Updated 2021-06-23 12:00 EST
+Updated 2021-07-12 20:00 EST
 """
 
 
@@ -688,10 +689,12 @@ def startLoop(arg):
     global pointer
     
     try:
-        intoLoopArgs.append([topOfStack, storage[pointer], pointer, copy.deepcopy(storage)])
+        if (arg == None):
+            intoLoopArgs.append([topOfStack, storage[pointer], pointer, copy.deepcopy(storage)])
     except:
         try:
-            intoLoopArgs.append([0, storage[pointer], pointer, copy.deepcopy(storage)])
+            if (arg == None):
+                intoLoopArgs.append([0, storage[pointer], pointer, copy.deepcopy(storage)])
         except:
             print("Unhandled error. Please send your code to rattleinterpreter@gmail.com and a fix will be issued soon!")
     
@@ -1093,6 +1096,7 @@ def printInteger(arg):
     elif(type(topOfStack)==str or type(topOfStack)==chr):
         print(ord(str(storage[arg])))
         
+        
 def getInteger(arg):        
     global topOfStack
     global storage
@@ -1106,8 +1110,9 @@ def getInteger(arg):
     elif(type(topOfStack)==int):
         topOfStack = (int(storage[arg]))
     elif(type(topOfStack)==str or type(topOfStack)==chr):
-        topOfStack = (ord(str(storage[arg])))        
-    
+        topOfStack = (ord(str(storage[arg])))
+        
+        
         
 def quitProgram(arg):
     global currentCommandIndex
