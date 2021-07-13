@@ -1,0 +1,12 @@
+I: storeInput
+
+
+Given no arguments, this function will step through the top of the stack as a list and store this list's items in consecutive memory slots starting at the pointer, and move the pointer to the next memory slot.
+
+Given the argument ?, this function will step through the top of the stack as a list and store this list's items backwards in consecutive memory slots starting at the pointer.
+
+Given an argument with no flags, this function sets the top of the stack to the the top of the stack's value at index arg (e.g. if the top of the stack is [a,b,c] and I2 is called, the top of the stack becomes c.
+
+Given an argument with the flag ^, this function makes a list from arg number of values in consecutive memory slots starting at the pointer
+
+Given only the flag ^, this function returns the length of the top of the stack.
