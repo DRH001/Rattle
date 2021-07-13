@@ -769,7 +769,7 @@ def endLoop(arg):
             commands[currentCommandIndex] = "]" + str(int(storage[arg]))      
         '''
         
-        
+    
         
         if("`" in commands[currentCommandIndex]):
             commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", str(intoLoopArgs[-1][0]))
@@ -784,9 +784,9 @@ def endLoop(arg):
         
         
         
-        if(arg == None): #case where the other bracket has arg (i.e. if statement)
-            del loopList[-1]
-        elif(arg == 1):
+        #if(arg == None): #case where the other bracket has arg (i.e. if statement)
+        #    del loopList[-1]
+        if(commands[currentCommandIndex][1:] == "1"):
             
             commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
             #print(commands)
@@ -798,6 +798,7 @@ def endLoop(arg):
             #return
             #commands.pop(currentCommandIndex)
         else:
+            
             #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
             commands[currentCommandIndex] = commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::]) -1)
             #currentCommandIndex = loopStart##
@@ -831,9 +832,9 @@ def endLoop(arg):
         
         
         
-        if(arg == None): #case where the other bracket has arg (i.e. if statement)
-            del loopList[-1]
-        elif(arg == 1):
+        #if(arg == None): #case where the other bracket has arg (i.e. if statement)
+        #    del loopList[-1]
+        if(functionCommandList[currentFunction][currentCommandIndexF[-1]][1:] == "1"):
             
             functionCommandList[currentFunction][currentCommandIndexF[-1]] = commandsCopyF[currentFunction][currentCommandIndexF[-1]]
             #print(commands)
@@ -1148,7 +1149,9 @@ def storeInput(arg):
             for i in range(len(topOfStack)):
                 storage[pointer] = topOfStack[-(i+1)]
                 pointer += 1
-            topOfStack = oldTopOfStack  
+            topOfStack = oldTopOfStack
+        if(arg != None):
+            topOfStack = storage[pointer][arg]
                 
     if(arg != None and not(argFlag or argFlag2)):    
         #with numerical arg: gets value at index arg
