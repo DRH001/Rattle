@@ -4,9 +4,9 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.1.5
+@version: 1.2.0
 
-Updated 2021-07-12 20:00 EST
+Updated 2021-07-13 13:00 EST
 """
 
 
@@ -1131,32 +1131,55 @@ def storeInput(arg):
         #topOfStack = [topOfStack]
     except:
         pass
-    if(argFlag):
-        if(arg == None):
-            for elem in topOfStack:
-                storage[pointer] = elem
-                pointer -= 1
-        else:
-            for i in range(arg):
-                for elem in topOfStack:
-                    storage[pointer] = elem
-                    pointer -= 1
-    elif(arg == None):
+    
+    
+    if(arg == None and not(argFlag or argFlag2)):
+        #no args: stores list at top of stack in consecutive memory slots
         for elem in topOfStack:
             storage[pointer] = elem
             pointer += 1
-    else:
-        for i in range(arg):
-            for elem in topOfStack:
-                storage[pointer] = elem
+        topOfStack = oldTopOfStack  
+    
+    
+    if(argFlag2):
+        # "?" arg (argFlag2)
+        if(arg == None):
+            #stores list at top of stack in consective memory slots, but in reverse
+            for i in range(len(topOfStack)):
+                storage[pointer] = topOfStack[-(i+1)]
                 pointer += 1
+            topOfStack = oldTopOfStack  
                 
-    topOfStack = oldTopOfStack            
+    if(arg != None and not(argFlag or argFlag2)):    
+        #with numerical arg: gets value at index arg
+        topOfStack = topOfStack[arg]
+        
+    if(arg != None and argFlag and not(argFlag2)):
+        #argFlag and numerical arg: make list from arg number of values in consecutive memory slots starting at pointer
+        topOfStack = []
+        for i in range(arg):
+            topOfStack.append(storage[pointer + i])
+            
+    if(arg == None and argFlag and not(argFlag2)):     
+        #given ^ only, gets length of top of stack
+        if(type(topOfStack) == int):
+            topOfStack = len(str(topOfStack))
+        elif(type(topOfStack) == float):
+            #make this return no. of decimal points instead? str(topOfStack).split(".")[1]
+            topOfStack = len(str(topOfStack))
+        else:
+            topOfStack = len(topOfStack)
+        
+        
+                
+    #topOfStack = oldTopOfStack            
     #stores top of stack starting at current pointer [if an array, stores each item in individual memory slots], sets pointer to slot after and gets value in this slot 
-    #given an arg, does the same thing but arg times
+    
     
 def getArray(arg):
     pass
     #gets the next arg memory slots and creates an array with them    
         
+
+    
 
