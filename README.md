@@ -38,7 +38,7 @@ In Rattle, there are many commands you can use:
             ">":pointerUp,                      #moves pointer up (or to the right)
             "P":setPointer,                     #sets pointer to argument
             "p":prnt,                           #prints item at the top of the stack
-            "!":flag,                           #(used internally)
+            "!":flag,                           #disables implicit output
             "c":concat,                         #concatenates value at argument's pointer in storage to the top of the stack
             "[":startLoop,                      #this is the start of a loop structure - any argument here acts as an if statement
             "]":endLoop,                        #this is the end of a loop structure - any argument here acts as a for loop
