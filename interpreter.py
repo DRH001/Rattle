@@ -23,7 +23,7 @@ to do:
     make a function to automatically store an array in memory and move the pointer to the next value
     make else statements? or maybe just not statements? <-- which can act as else statements (make it use an argflag?)
 """
-
+ 
 
 """
 quick programs:
