@@ -1,7 +1,7 @@
 # Rattle (version 1.3.0)
 A new imperative programming language designed to have no necessary boilerplate
 
-[Click here](https://rattleinterpreter.pythonanywhere.com/){:target="_blank"} to try out some code of your own!
+[Click here](https://rattleinterpreter.pythonanywhere.com/) to try out some code of your own!
 
 What's New
 =
