@@ -4,9 +4,9 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.2.0
+@version: 1.3
 
-Updated 2021-07-13 13:00 EST
+Updated 2021-07-14 22:00 EST
 """
 
 
@@ -64,7 +64,11 @@ For input:
 
 """
    
+global error_
 
+def traceError():
+    import traceback
+    traceback.print_last()
 
 
 def parse(code):
@@ -231,15 +235,26 @@ def parse(code):
     from time import perf_counter as currentTime 
     start = currentTime()    
         
-    
+    #global out
+    #global error_
+    global firstError
+    firstError = True
     while(currentCommandIndex < len(commands)):
-        runCommand(commands[currentCommandIndex])
+        try:
+            runCommand(commands[currentCommandIndex])
+        except Exception as error:
+            #error_string = str(error)
+            #out[2] = error
+            #error_ = error
+            print("Error:", error, "at command index", currentCommandIndex, "-", commands[currentCommandIndex])
+            raise(error)
+            
         currentCommandIndex += 1
         
         if(currentCommandIndex % 100 == 0):
             if(currentTime() > start + 5):
                 print("Program timed out. Did you forget your exit condition?")
-                break
+                return
         
   
     
@@ -392,6 +407,8 @@ def executeFunction(functionIndex):
     global currentCommandIndexF
     global currentFunction
     global loopList
+    global firstError
+    
     
     inFunction = True
     
@@ -427,7 +444,21 @@ def executeFunction(functionIndex):
                 break
                 
             inFunction = True
-            runCommand(functionCommandList[currentFunction][currentCommandIndexF[-1]])
+            try:
+                runCommand(functionCommandList[currentFunction][currentCommandIndexF[-1]])
+            except Exception as error:
+                #error_string = str(error)
+                #out[2] = error
+                #error_ = error
+                if(firstError):
+                    print("Error:", error, "in function", currentFunction, "at function command index", currentCommandIndexF[-1], "-", functionCommandList[currentFunction][currentCommandIndexF[-1]])
+                    firstError = False
+                else: 
+                    print("Error:", error, "at function command index", currentCommandIndexF[-1], "-", functionCommandList[currentFunction][currentCommandIndexF[-1]])
+                    
+                currentCommandIndexF.pop(-1)
+                currentFunction = functionIndex
+                raise(Exception("error in function " + str(currentFunction)))    
             currentCommandIndexF[-1] += 1
         
             if(currentCommandIndexF[-1] % 100 == 0):
