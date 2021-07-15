@@ -459,6 +459,7 @@ def executeFunction(functionIndex):
                 currentCommandIndexF.pop(-1)
                 currentFunction = functionIndex
                 raise(Exception("error in function " + str(currentFunction)))    
+            
             currentCommandIndexF[-1] += 1
         
             if(currentCommandIndexF[-1] % 100 == 0):
@@ -788,6 +789,8 @@ def endLoop(arg):
     #print("test ", loopList, commands[currentCommandIndex])
     #print(commands)
     
+    
+    
     if(inFunction == False):
         '''
         if("`" in commands[currentCommandIndex]):
@@ -815,9 +818,9 @@ def endLoop(arg):
         
         
         
-        #if(arg == None): #case where the other bracket has arg (i.e. if statement)
-        #    del loopList[-1]
-        if(commands[currentCommandIndex][1:] == "1"):
+        if(arg == None): #case where the other bracket has arg (i.e. if statement)
+            del loopList[-1]
+        elif(commands[currentCommandIndex][1:] == "1"):
             
             commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
             #print(commands)
@@ -863,9 +866,9 @@ def endLoop(arg):
         
         
         
-        #if(arg == None): #case where the other bracket has arg (i.e. if statement)
-        #    del loopList[-1]
-        if(functionCommandList[currentFunction][currentCommandIndexF[-1]][1:] == "1"):
+        if(arg == None): #case where the other bracket has arg (i.e. if statement)
+            del loopList[-1]
+        elif(functionCommandList[currentFunction][currentCommandIndexF[-1]][1:] == "1"):
             
             functionCommandList[currentFunction][currentCommandIndexF[-1]] = commandsCopyF[currentFunction][currentCommandIndexF[-1]]
             #print(commands)
