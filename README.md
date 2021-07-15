@@ -4,7 +4,7 @@ A new imperative programming language designed to have no necessary boilerplate
 [Click here](https://rattleinterpreter.pythonanywhere.com/) to try out some code of your own!
 
 
-This interpreted language is developed to be easy to use and hard to mess up. To acheive this, all commands are a single character and their arguments follow - for example, you would do `+2` to add 2 to the current value.
+This interpreted language is developed to be easy to use and hard to mess up. To acheive this, all commands are a single character and their arguments follow - for example, you would do `+2` to add 2 to the current value (where `+` is the command and `2` is the argument.
 
 Rattle is a very versatile language - it works on a circular data tape, where you can move the pointer to whichever slot you want, and manipulate data in that slot and at the top of the stack at the same time. Rattle is an imperative programming language, like C++.
 
