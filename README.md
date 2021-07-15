@@ -61,9 +61,9 @@ Here's a [sample program](https://rattleinterpreter.pythonanywhere.com/?flags=&c
 
             |f0;[1=f]-s+>s[g<%~[0=f]g-s>]~=1
             
-In a more expanded, human-readable form, this looks like this:
+Here's the program split into its individual commands:
 
-            | f0; [1 = f ]  - s + > s  [ g < %~  [0 = f ]  g - s > ]~ =1
+            | f0; [1 = f ] - s + > s [ g < %~ [0 = f ] g - s > ]~ =1
             
 Going from left to right,
 
