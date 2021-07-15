@@ -1,7 +1,7 @@
-# Rattle (version 1.2.0)
-A new imperative programming language
+# Rattle (version 1.3.0)
+A new imperative programming language designed to have no necessary boilerplate
 
-Here's the shiny new interpreter: https://rattleinterpreter.pythonanywhere.com/
+[Click here](https://rattleinterpreter.pythonanywhere.com/){:target="_blank"} to try out some code of your own!
 
 What's New
 =
