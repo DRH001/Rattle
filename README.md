@@ -6,7 +6,7 @@ A new imperative programming language designed to have no necessary boilerplate
 
 This interpreted language is developed to be easy to use and hard to mess up. To acheive this, all commands are a single character and their arguments follow - for example, you would do `+2` to add 2 to the current value (where `+` is the command and `2` is the argument.
 
-Rattle is a very versatile language - it works on a circular data tape, where you can move the pointer to whichever slot you want, and manipulate data in that slot and at the top of the stack at the same time. Rattle is an imperative programming language, like C++.
+Rattle is a very versatile language - it works on a 100-slot circular data tape, where you can move the pointer to whichever slot you want, and manipulate data in that slot and at the top of the stack at the same time. Rattle is an imperative programming language, like C++.
 
 To take input, your code simply needs the `|` character - data types are recognised automatically. If you want to take multiple inputs, you can separate them with `&`. In order to use different functions in your code, you simply have to use the following format:
             `MAIN_METHOD; FUNCTION_0; FUNCTION_1; FUNCTION_2 ...`
