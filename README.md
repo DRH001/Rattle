@@ -1,15 +1,22 @@
-# Rattle (version 1.3.0)
+# Rattle (version 1.4.0)
 A new imperative programming language designed to have no necessary boilerplate
 
 [Click here](https://rattleinterpreter.pythonanywhere.com/) to try out some code of your own!
 
 
-This interpreted language is developed to be easy to use and hard to mess up. To acheive this, all commands are a single character and their arguments follow - for example, you would do `+2` to add 2 to the current value (where `+` is the command and `2` is the argument.
+This interpreted language is developed to be easy to use and hard to mess up. To acheive this, all commands are a single character and their arguments follow - for example, you would simply do `+2` to add 2 to the current value.
 
 Rattle is a very versatile language - it works on a 100-slot circular data tape, where you can move the pointer to whichever slot you want, and manipulate data in that slot and at the top of the stack at the same time. Rattle is an imperative programming language, like C++.
 
-To take input, your code simply needs the `|` character - data types are recognised automatically. If you want to take multiple inputs, you can separate them with `&`. In order to use different functions in your code, you simply have to use the following format:
-            `MAIN_METHOD; FUNCTION_0; FUNCTION_1; FUNCTION_2 ...`
+Basics
+=
+
+To take input or declare variables, your code simply needs the `|` character - data types are recognised automatically. If you want to take multiple inputs or create lists, you can separate them with `&`. In order to use different functions in your code, you simply have to use the following format and call functions with `f0`, `f1`, etc.:
+            `VARIABLES (or leave blank to prompt for input) | MAIN_METHOD; FUNCTION_0; FUNCTION_1; FUNCTION_2 ...`
+
+To call commands in Rattle, you need to use one of the commands (the single character seen inside quotation marks in the long list below). Many commands have functionality without arguments, but arguments can be added by adding the argument immediately after the command (for example, `+2`, `=5`, `%3`, `p` are all valid commands). To use more than one command, simply string them together (e.g. `=5 %3 p`). Whitespace is optional.
+
+You can also make use of arguments other than just numbers: You can use `~` to pass the value in storage at the current pointer, ``` ` ``` to pass the value at the top of the stack, and `@` to pass the value of the pointer itself.
 
 In Rattle, there are many commands you can use:
 
@@ -33,7 +40,7 @@ In Rattle, there are many commands you can use:
             "$":swap,                           #swaps the top of the stack with the item in storage at the current pointer
             "r":secondArgument,                 #(used internally)
             "=":topOfStackEquals,               #sets top of stack to argument
-            "_":pointedValueInStorageEquals,    #sets value in storage at the pointer to argument
+            "v":pointedValueInStorageEquals,    #sets value in storage at the pointer to argument NOTE: in versions pre-1.4, this was "_"
             "t":stringFunction,                 #(currently in development)
             ",":printCharAt,                    #prints the character of an int value
             "a":arrayInitFunctions,             #array functions (currently in development)
@@ -49,7 +56,7 @@ In Rattle, there are many commands you can use:
             "d":debugIndex                      #prints "d(arg) has been executed" - useful for debugging code
             "n":getInteger                      #converts value to int
 
-You can also make use of arguments other than just numbers: You can use ~ to pass the value in storage at the current pointer, \` to pass the value at the top of the stack, and @ to pass the value of the pointer itself.
+
 
 
 
