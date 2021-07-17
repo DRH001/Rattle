@@ -996,6 +996,8 @@ def modulo(arg):
         topOfStack = topOfStack % 100
     else:
         topOfStack = topOfStack % arg
+    if(topOfStack == int(topOfStack)):
+        topOfStack = int(topOfStack)
 
 
 
