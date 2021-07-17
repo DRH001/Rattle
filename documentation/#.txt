@@ -1,0 +1,9 @@
+# is used to get the iterator of a loop. That is to say, if you have the loop [=# p]5 then this will output 0 1 2 3 4 (on new lines).
+
+If # is used with an argument, it can get iterators from nested loops. # called without an argument (or #0) gets the iterator for the current loop, #1 gets the iterator for the next loop up, and so on.
+
+
+
+
+
+Introduced in Rattle 1.4
