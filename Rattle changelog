@@ -1,6 +1,11 @@
 
 Rattle has now officially been released! Rattle is now an imperative language - it's now actually useful for normal programming!
 
+
+
+
+Version 1.4.*: added exponentiate, loop iterators, better support for negatives, changed pointedValueInStorageEquals to "v", strings can be used as args for many functions, bugfixes
+
 Version 1.3.*: Much better error handling and debug info
 
 Version 1.2.*: List and array functions have been improved (see documentation). Improved utility for ASCII codes.
