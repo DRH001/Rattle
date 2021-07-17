@@ -1267,7 +1267,10 @@ def storeInput(arg):
         #topOfStack = [topOfStack]
     except:
         pass
-
+    
+    if(arg != None):
+        arg = int(arg)
+        
 
     if(arg == None and not(argFlag or argFlag2)):
         #no args: stores list at top of stack in consecutive memory slots
