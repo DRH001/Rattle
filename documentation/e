@@ -1,0 +1,4 @@
+e: exponentiate
+
+
+e is used to exponentiate the top of the stack. The top of the stack gets set to (top of stack) ^ (argument)
