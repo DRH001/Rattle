@@ -377,9 +377,11 @@ def runCommand(c):
     if("#" in arg): #NEEDS TO BE REPLACED LAST
         if("#" == arg):
             arg = str(int(loopIterator[-1]))
+            argRaw = arg
         else:
             coarg = int(arg.replace("#",""))
-            arg = loopIterator[-(1+coarg)]   
+            arg = loopIterator[-(1+coarg)]  
+            argRaw = arg
 
 
     if(arg != ""): #PARSE ARG AS INT OR FLOAT IF POSSIBLE
