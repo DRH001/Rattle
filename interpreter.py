@@ -293,12 +293,10 @@ def parse(code):
 
 
     #check for end flags: no output, output last character, etc
-
-    if(outputAtEnd):
-        if(printBuffer != []):
-            printout("".join(printBuffer))
-        else:
-            printout(topOfStack)
+    if(printBuffer != []):
+        printout("".join(printBuffer))
+    elif(outputAtEnd):
+        printout(topOfStack)
 
 
 
