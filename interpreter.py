@@ -3,10 +3,23 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.4.0
+@version: 1.4.1
 
-Updated 2021-07-16 23:00 EST
+Updated 2021-07-19 23:00 EST
 """
+
+
+"""
+to do:
+    
+    make commands operate on every item in a list if they otherwise don't support lists
+    i.e. [1,2,3]| +1 p -> [2,3,4]
+    ^     +,-,*,/,e
+    make f^0 create a virtual machine which is passed the top of the stack and returns the virtual top of the stack, does not affect anything else
+
+
+"""
+
 
 
 """
@@ -134,6 +147,11 @@ def parse(code):
     global intoLoopArgs
     global errout_
     global loopIterator
+    global loopOrIf
+    
+    
+    
+    loopOrIf = []
 
     intoLoopArgs = []
     loopIterator = []
@@ -280,6 +298,10 @@ def parse(code):
             error_string = str(error)
             errorout("Error: " + error_string + " at command index " + str(currentCommandIndex) + " [" + str(commands[currentCommandIndex]) + "]")
             if(running):
+                global output_
+                global errout_
+                print(output_)
+                print(errout_)
                 raise(error)
             return
         currentCommandIndex += 1
@@ -343,6 +365,8 @@ def runCommand(c):
 
     arg = c[1::]
     argRaw = arg
+    
+    inLoop = func == "]" and arg != None and arg != "" and (loopOrIf == [] or loopOrIf[-1])
 
     if("^" in arg):
         arg = arg.replace("^","")
@@ -362,16 +386,31 @@ def runCommand(c):
         argRaw = arg
         
     
+
     if("~" in arg):
-        arg = arg.replace("~",str(int(storage[pointer])))
-        argRaw = storage[pointer]
+        if(inLoop):
+            arg = arg.replace("~",str(intoLoopArgs[-1][1]))
+            argRaw = storage[pointer]
+        else:    
+            arg = arg.replace("~",str(int(storage[pointer])))
+            argRaw = storage[pointer]
+            
+            
+        #ADD CASE FOR inFunction as well!!!!!!!!!!!!!!!!!!! @todo
 
     if("`" in arg):
-        arg = arg.replace("`",str(int(topOfStack)))
-        argRaw = topOfStack
+        if(inLoop):
+            arg = arg.replace("`",str(intoLoopArgs[-1][0]))
+            argRaw = topOfStack
+        else:    
+            arg = arg.replace("`",str(int(topOfStack)))
+            argRaw = topOfStack
 
     if("@" in arg):
-        arg = arg.replace("@",str(int(pointer)))
+        if(inLoop):
+            arg = arg.replace("@",str(intoLoopArgs[-1][2]))
+        else:    
+            arg = arg.replace("@",str(int(pointer)))
         
         
     if("#" in arg): #NEEDS TO BE REPLACED LAST
@@ -797,7 +836,6 @@ def startLoop(arg):
     global storage
     global loopList
     global commands
-    global currentCommandIndex
     global argFlag
     global inFunction
     global currentCommandIndexF
@@ -807,14 +845,19 @@ def startLoop(arg):
     global topOfStack
     global pointer
     global loopIterator
+    global loopOrIf
 
-
+    
     loopIterator.append(0)
-
+    #printout("LOOP")
 
     try:
-        if (arg == None):
+        if (arg == None):#FOR LOOP!
+            #loopIterator.append(0)
+            loopOrIf.append(True)
             intoLoopArgs.append([topOfStack, storage[pointer], pointer, copy.deepcopy(storage)])
+        else: #IF STATEMENT
+            loopOrIf.append(False)
     except:
         try:
             if (arg == None):
@@ -822,42 +865,82 @@ def startLoop(arg):
         except:
             print("Unhandled error. Please send your code to rattleinterpreter@gmail.com and a fix will be issued soon!")
 
+    #print(arg == topOfStack, argFlag)
 
     if(not(inFunction)):
         loopList.append(currentCommandIndex)###
-        if(arg == None): #case where the other bracket has an argument
+        if(arg == None or arg == ""): #case where the other bracket has an argument
             pass
         elif(argFlag):
-            if(arg == topOfStack):
+            if(str(arg) == str(topOfStack)):
+                #print("HERE!")
                 #skip until the closing bracket
-                while(commands[currentCommandIndex] != "]"):
+                
+                closed = False
+                opens = 1
+                while(not(closed)):
                     currentCommandIndex += 1
+                    if(commands[currentCommandIndex][0] == "["):
+                        opens += 1
+                    if(commands[currentCommandIndex][0] == "]"):
+                        opens -= 1
+                        if(opens == 0):
+                            closed = True
                 currentCommandIndex -= 1
+                #print("HERE!", commands[currentCommandIndex])
         else:
             #print(arg, topOfStack)
-            if(not(arg == topOfStack)):
+            if(not(str(arg) == str(topOfStack))):
                 #skip until the closing bracket
-                while(commands[currentCommandIndex] != "]"):
+                
+                closed = False
+                opens = 1
+                while(not(closed)):
                     currentCommandIndex += 1
+                    if(commands[currentCommandIndex][0] == "["):
+                        opens += 1
+                    if(commands[currentCommandIndex][0] == "]"):
+                        opens -= 1
+                        if(opens == 0):
+                            closed = True
                 currentCommandIndex -= 1
             #if statement..... based on stuff in storage (with a flag or something)
     else:
         loopList.append(currentCommandIndexF[currentFunction])
-        if(arg == None): #case where the other bracket has an argument
+        if(arg == None or arg == ""): #case where the other bracket has an argument
             pass
         elif(argFlag):
-            if(arg == topOfStack):
+            if(str(arg) == str(topOfStack)):
                 #skip until the closing bracket
-                while(functionCommandList[currentFunction][currentCommandIndexF[-1]] != "]"):
+                closed = False
+                opens = 1
+                while(not(closed)):
                     currentCommandIndexF[-1] += 1
+                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "["):
+                        opens += 1
+                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
+                        opens -= 1
+                        if(opens == 0):
+                            closed = True
                 currentCommandIndexF[-1] -= 1
+                
+            
         else:
             #print(arg, topOfStack)
-            if(not(arg == topOfStack)):
+            if(not(str(arg) == str(topOfStack))):
                 #skip until the closing bracket
-                while(functionCommandList[currentFunction][currentCommandIndexF[-1]] != "]"):
+                closed = False
+                opens = 1
+                while(not(closed)):
                     currentCommandIndexF[-1] += 1
+                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "["):
+                        opens += 1
+                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
+                        opens -= 1
+                        if(opens == 0):
+                            closed = True
                 currentCommandIndexF[-1] -= 1
+
 
 
 
@@ -881,6 +964,7 @@ def endLoop(arg):
     #print("test ", loopList, commands[currentCommandIndex])
     #print(commands)
     global loopIterator
+    global loopOrIf
     
     loopIterator[-1] += 1
 
@@ -911,16 +995,22 @@ def endLoop(arg):
 
 
 
-        if(arg == None): #case where the other bracket has arg (i.e. if statement) #END OF LOOP
+        if(arg == None or arg == ""): #case where the other bracket has arg (i.e. if statement) #END OF LOOP
+            #printout("LOOPX")
             del loopList[-1]
             del loopIterator[-1]
+            del loopOrIf [-1]
+            
         elif(commands[currentCommandIndex][1:] == "1"): #END OF LOOP
 
             commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
             #print(commands)
+            #printout("LOOPX")
             del loopList[-1]
             del intoLoopArgs[-1]
             del loopIterator[-1]
+            del loopOrIf [-1]
+            
             #commands = commandsCopy##
 
             #print("here")
@@ -935,7 +1025,7 @@ def endLoop(arg):
 
         #print("test ",loopList,  commands[currentCommandIndex], "\n")
 
-    else:
+    else: #IN FUNCTION
 
         if("`" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
             functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("`", str(intoLoopArgs[-1][0]))
@@ -961,9 +1051,10 @@ def endLoop(arg):
 
 
 
-        if(arg == None): #case where the other bracket has arg (i.e. if statement) #END FUNCTION LOOP
+        if(arg == None or arg == ""): #case where the other bracket has arg (i.e. if statement) #END FUNCTION LOOP
             del loopList[-1]
             del loopIterator[-1]
+            del loopOrIf [-1]
         elif(functionCommandList[currentFunction][currentCommandIndexF[-1]][1:] == "1"): #END FUNCTION LOOP
 
             functionCommandList[currentFunction][currentCommandIndexF[-1]] = commandsCopyF[currentFunction][currentCommandIndexF[-1]]
@@ -971,6 +1062,7 @@ def endLoop(arg):
             del loopList[-1]
             del intoLoopArgs[-1]
             del loopIterator[-1]
+            del loopOrIf [-1]
             #commands = commandsCopy##
 
             #print("here")
