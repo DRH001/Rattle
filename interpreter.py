@@ -3,9 +3,9 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.4.1
+@version: 1.4.3
 
-Updated 2021-07-19 23:00 EST
+Updated 2021-08-17 19:00 EST
 """
 
 
@@ -211,7 +211,26 @@ def parse(code):
             else:
                 topOfStack = main.split("|")[0]
 
-            main = main.split("|")[1].replace(" ","").replace("\n","")
+            main = main.split("|")[1]#.replace(" ","").replace("\n","")
+            
+            openString = False
+            newMain = ""
+            for char in main:
+                if(char == "\""):
+                    if(not(openString)):
+                        openString = True
+                    else:
+                        openString = False
+                        
+                if((char == " " or char == "\n") and not(openString)):
+                    pass
+                else:
+                    newMain = newMain + char
+            main = newMain
+            
+            #print(main)
+            
+            
             if(main == ""):
                 printout(topOfStack)
                 return
@@ -305,6 +324,7 @@ def parse(code):
                 raise(error)
             return
         currentCommandIndex += 1
+        #print("HERE!!!")
 
         if(currentTime() > start + 4):
             printout("Program timed out. Did you forget your exit condition?")
@@ -1133,6 +1153,10 @@ def pointedValueInStorageEquals(arg):
     storage[pointer] = arg
 
 def stringFunction(arg):
+    global topOfStack
+    if(arg == None): #flip topOfStack
+        topOfStack = str(topOfStack)[::-1] 
+        
     pass#define string functions here: flip/reverse, bin/hex (or make new fns for these), decompress (e.g. 126 bit compression), caesar shift
 
 
@@ -1149,6 +1173,7 @@ def printCharAt(arg):
         printout(chr(int(storage[pointer])))
     else:
         if(arg == None):
+            #print("HERE!")
             printout(chr(int(topOfStack)), end="")
             return
         printout(chr(int(storage[pointer])), end="")
@@ -1278,6 +1303,9 @@ def concatToPrintBuffer(arg):
     global argFlag2
     #print("here1", arg, argFlag, argFlag2)
 
+    if(arg != None):
+        arg = int(arg)
+
     if(argFlag):
         if(arg == None):
             printBuffer[-1] = ""
@@ -1345,6 +1373,9 @@ def getInteger(arg):
 def quitProgram(arg):
     global currentCommandIndex
     if(arg == None):
+        currentCommandIndex += 2147483647
+    else:
+        printout(storage[arg])
         currentCommandIndex += 2147483647
 
 
@@ -1469,8 +1500,13 @@ https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cf0%3B%5B1%3Df%5D-s%
         if(running):
             raise(error)
         temp = getError()
-    out[1] += output_[:-1]
+        
+    if(output_[-1] == "\n"):
+        output_ = output_[:-1]
+        
+    out[1] += output_#[:-1]
     out[2] = temp
+    #print(out)
     
     if(running):
         print(out[1])
@@ -1481,6 +1517,9 @@ https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cf0%3B%5B1%3Df%5D-s%
 
 def run2(code, input_list=""):
     global running
+    global errout_
+    
+    errout_ = ""
     running = True
     
     execute(code, None, input_list, ["","",""])
@@ -1488,6 +1527,9 @@ def run2(code, input_list=""):
     
 def run():
     global running
+    global errout_
+    
+    errout_ = ""
     running = True
     
     code = input("Code:\n")
