@@ -57,7 +57,8 @@ In Rattle, there are many commands you can use:
             "n":getInteger                      #converts value to int
 
 
-
+New in 1.5: Better arguments! Now, round brackets "(", ")" can be used to pass more complex arguments to functions. Example: `=(2*4/3)` will set the top of the stack to 2.66...
+                  Note that special characters can be used in the round-bracket arguments - you can use `~`,``` ` ```,`@`, etc.
 
 
 
