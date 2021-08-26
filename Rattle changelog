@@ -4,6 +4,8 @@ Rattle has now officially been released! Rattle is now an imperative language - 
 
 
 
+Version 1.5.*: better arguments. Now, round brackets "(", ")" can be used to pass more complex arguments to functions. Example: `=(2*4/3)` will set the top of the stack to 2.66...
+
 Version 1.4.*: added exponentiate, loop iterators, better support for negatives, changed pointedValueInStorageEquals to "v", strings can be used as args for many functions, bugfixes
 
 Version 1.3.*: Much better error handling and debug info
