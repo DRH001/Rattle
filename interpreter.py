@@ -3,14 +3,16 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.4.3
+@version: 1.5.0
 
-Updated 2021-08-17 19:00 EST
+Updated 2021-08-22 21:00 EST
 """
 
 
 """
 to do:
+    
+    make an arg of zero for a for loop stay at zero instead of going negative. [...]_n should loop n times but count backwards
     
     make commands operate on every item in a list if they otherwise don't support lists
     i.e. [1,2,3]| +1 p -> [2,3,4]
@@ -24,6 +26,8 @@ to do:
 
 """
 new:
+    better arguments in brackets - (2/3) can now be an argument (including the brackets)
+    
     exponentials [done]
     iterator in loop!!!!!!!!!!!!!!!!!!!!!!!! [done]
     list sum (numerical or string)
@@ -344,16 +348,18 @@ def parse(code):
 
 
 
-def getCommandList(f,rep):
+def getCommandList(f, rep):
 
-    possibleArgs = "0123456789~`@&^?._#"# & represents a spacer in case some functions need lots of arguments
+    possibleArgs = "0123456789~`@&^?._#()"# & represents a spacer in case some functions need lots of arguments
+    
     #^ and ? are argument flags
     tempList = []
 
     last = ""
     closed = True
+    closedRoundBracket = True
     for i in range(len(f)):
-        if(f[i] == "\"" and closed):
+        if(f[i] == "\"" and closed): #let strings exist as args
             closed = False
         elif(closed == False):
             tempList[-1] = last + f[i]
@@ -361,6 +367,16 @@ def getCommandList(f,rep):
             if(f[i] == "\""):
                 closed = True
                 tempList[-1] = tempList[-1][:-1]
+        elif(f[i] == "(" and closedRoundBracket): #let args exist in round brackets
+            closedRoundBracket = False
+        elif(closedRoundBracket == False):
+            tempList[-1] = last + f[i]
+            last = tempList[-1]
+            if(f[i] == ")"):
+                closedRoundBracket = True
+                tempList[-1] = tempList[-1][:-1]    
+                
+                
         elif(not(f[i] in possibleArgs)):
             tempList.append(f[i])
             last = f[i]
@@ -369,6 +385,22 @@ def getCommandList(f,rep):
             last = tempList[-1]
 
     return(tempList * rep)
+
+
+
+def solveArg(arg):
+    global argRaw
+    try:
+        l = locals()
+        
+        arg2 = "x="+ str(arg)
+        exec(arg2, locals())
+        arg = l["x"]
+        argRaw = arg
+    except:
+        pass
+    
+    return(arg)
 
 
 
@@ -438,10 +470,33 @@ def runCommand(c):
             arg = str(int(loopIterator[-1]))
             argRaw = arg
         else:
-            coarg = int(arg.replace("#",""))
-            arg = loopIterator[-(1+coarg)]  
-            argRaw = arg
+            
+            import re
+            
+            #pieces = arg.split("+").split("-").split("*").split("/").split("\"").split("%").split("==")
+            pieces = re.split("\+|-|\*|/|\"|%|==|\*\*", arg)
+            import copy
+            piecesCopy = copy.deepcopy(pieces)
+            
+            for i in range(len(pieces)):
+                if("#" in pieces[i]):
+                   coarg = int(pieces[i].replace("#",""))
+                   pieces[i] = loopIterator[-(1+coarg)]
+                   arg = arg.replace(str(piecesCopy[i]), str(pieces[i]), 1)
+                   
+            
+            
+            #coarg = int(arg.replace("#",""))
+            #arg = loopIterator[-(1+coarg)]  
+            #argRaw = arg
 
+    
+    #print(arg, type(arg))
+
+    arg = solveArg(arg)
+
+
+    #print("here3", arg)
 
     if(arg != ""): #PARSE ARG AS INT OR FLOAT IF POSSIBLE
         try:
@@ -457,6 +512,7 @@ def runCommand(c):
     if(arg == ""):
         arg = None
 
+    
     
     if("&" in str(arg)):#changes arg to a list
         arg = arg.split("&")
@@ -1039,7 +1095,14 @@ def endLoop(arg):
         else:
 
             #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
-            commands[currentCommandIndex] = commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::]) -1)
+            l = locals()
+            code_ = "x=" + str(commands[currentCommandIndex][1::])
+            exec(code_, locals())
+            newArg = l["x"]
+            
+            
+            
+            commands[currentCommandIndex] = commands[currentCommandIndex][0] + str(int(newArg) -1)
             #currentCommandIndex = loopStart##
             currentCommandIndex = loopList[-1]##
 
@@ -1090,7 +1153,13 @@ def endLoop(arg):
             #commands.pop(currentCommandIndex)
         else:
             #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]][0] + str(int(functionCommandList[currentFunction][currentCommandIndexF[-1]][1::]) -1)
+            l = locals()
+            code_ = "x=" + str(functionCommandList[currentFunction][currentCommandIndexF[-1]][1::])
+            exec(code_, locals())
+            newArg = l["x"]
+            
+            
+            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]][0] + str(int(newArg) -1)
             #currentCommandIndex = loopStart##
             currentCommandIndexF[-1] = loopList[-1]##
 
@@ -1171,6 +1240,9 @@ def printCharAt(arg):
             printout(chr(int(topOfStack)))
             return
         printout(chr(int(storage[pointer])))
+    elif(argFlag2):
+        topOfStack = chr(int(topOfStack))
+        return
     else:
         if(arg == None):
             #print("HERE!")
@@ -1304,7 +1376,11 @@ def concatToPrintBuffer(arg):
     #print("here1", arg, argFlag, argFlag2)
 
     if(arg != None):
-        arg = int(arg)
+        try:
+            arg = int(arg)
+        except:
+            printBuffer.append(arg)
+            return
 
     if(argFlag):
         if(arg == None):
