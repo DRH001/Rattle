@@ -1,0 +1,7 @@
+= is used to set the top of the stack to a value. Given no argument, the top of the stack is set to 0.
+
+
+[1.6.*]
+? can be passed as an argument flag to set the top of the stack to a random value. 
+  Given no secondary argument, the top of the stack is set to a random value between 0 and 1.
+  Given a secondary argument (as an integer), the top of the stack is set to a random value between 0 and that value (not including that value). Example: =?4 sets the top of the stack to 0, 1, 2, or 3.
