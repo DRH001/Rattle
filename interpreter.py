@@ -465,7 +465,7 @@ def runCommand(c):
             v.argRaw = v.storage[v.pointer]
         else:   
             try:
-                arg = arg.replace("~",str(int(v.storage[v.pointer])))
+                arg = arg.replace("~",str(v.storage[v.pointer]))
             except:#list...
                 import ast
                 arg = arg.replace("~", str(v.storage[v.pointer]))
