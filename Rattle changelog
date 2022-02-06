@@ -51,7 +51,7 @@ Version 1.6.*:
   -Better array handling (arithmetic operations using scalars perform an element-wise operation on the top of the stack -> topOfStack = [4,2], *3 = [12,6]) 
       Note that arrays in Rattle use round brackets. Example: `=(1,2,3)` sets the top of the stack to [1,2,3]
   -Removing support for some default operators which were intended for code golfing (such as *0 multiplying by 10 instead of 0)
-  -Miscellaneous fixes (such as allowing whitespace in functions, fixed string parsing to not include end quotation mark, allowing empty output)
+  -Miscellaneous fixes (such as allowing whitespace in functions and string args, fixed string parsing to not include end quotation mark, allowing empty output)
   -Version 1.6.* should be backwards compatible with all previous Rattle code
 
 Version 1.5.*: better arguments. Now, round brackets "(", ")" can be used to pass more complex arguments to functions. Example: `=(2*4/3)` will set the top of the stack to 2.66...
