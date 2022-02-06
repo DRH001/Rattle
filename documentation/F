@@ -1,0 +1,46 @@
+F is used to call (or return from) local functions
+
+Usage:
+Fn (where n is an integer) calls local function n
+F (no argument) returns from the current local function
+
+Local functions are similar to functions but they do not affect main memory. Local functions are called using "F", and global functions are called using "f"
+      Local functions are similar to the current functions (AKA global functions), but local functions are appended to the very end of code and use the separator : (where global functions use ;)
+          Note: Local functions MUST be declared after global functions.
+      Local functions have their own memory and are currently only passed the top of the stack, and return the top of the stack from the local function. Any memory used in a local function is discarded when the function returns.
+      An example of how to use local functions:
+          1|sF0g:p+sp[F1]4pgp:[+]3d1
+          ...which outputs
+              1
+              2
+              d1 has been executed
+              d1 has been executed
+              d1 has been executed
+              d1 has been executed
+              14
+              2
+              1
+          Explanation:
+          
+              Main:
+              1|               pass 1 as input
+                s              save 1 to main memory slot 0
+                 F0            call local function 0
+                   g           get data from slot 0 (=1), print implicitly after code executes
+                   
+              Local function 0:               
+              p                print top of stack (1)
+               +               increment top of stack (to 2)
+                s              save top of stack to local function 0's memory slot 0
+                 p             print top of stack (2)
+                  [  ]4        loop 4 times
+                   F1          call local function 1
+                       p       print top of stack
+                        g      get value from local function 0's memory slot 0 (=2)
+                         p     print top of stack (2)
+              
+              Local function 1:
+              [ ]3             loop 3 times
+               +               increment top of stack
+                  d1           debug helper - prints "d1 has been executed". This prints 4 times because local function 0 calls local function 1 four times.
+          
