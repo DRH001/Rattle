@@ -261,7 +261,7 @@ def parse(code, topLevel = True):
 
         else:
             v.outputAtEnd = False
-            v.main = v.main.replace(" ","").replace("\n","")
+            #v.main = v.main.replace(" ","").replace("\n","")
     except:
         errorout("Input error. Please ensure you have given the program the correct number of inputs!")
         return
@@ -295,8 +295,8 @@ def parse(code, topLevel = True):
 
     v.functions = v.pieces[1::]
 
-    for i in range(len(v.functions)):
-        v.functions[i] = v.functions[i].replace(" ","")
+    #for i in range(len(v.functions)):
+        #v.functions[i] = v.functions[i].replace(" ","")
 
 
     try:
@@ -432,6 +432,8 @@ def runCommand(c):
     #global loopIterator
 
     func = c[0]
+    if(func == " " or func == "\n"):
+        return
 
     arg = c[1::]
     v.argRaw = arg
@@ -639,11 +641,11 @@ def executeFunction(functionIndex):
         
         v.commandsCopyF[v.currentFunction] = getCommandList(v.functions[functionIndex],1)
         
-        try:
+        '''try:
             v.functionCommandList[v.currentFunction].remove("\n")
             v.commandsCopyF[v.currentFunction].remove("\n")
         except:
-            pass
+            pass'''
 
 
         from time import perf_counter as currentTime
