@@ -21,7 +21,7 @@ Version 1.6.*:
               2
               1
           Explanation:
-          
+           
               Main:
               1|               pass 1 as input
                 s              save 1 to main memory slot 0
