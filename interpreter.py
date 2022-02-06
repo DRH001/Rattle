@@ -384,7 +384,7 @@ def getCommandList(f, rep):
             last = tempList[-1]
             if(f[i] == "\""):
                 closed = True
-                tempList[-1] = tempList[-1][:-1]#not sure if this is necessary
+                #tempList[-1] = tempList[-1][:-1]#remove this
         elif(f[i] == "(" and closedRoundBracket): #let args exist in round brackets
             closedRoundBracket = False
         elif(closedRoundBracket == False):
