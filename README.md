@@ -1,4 +1,4 @@
-# Rattle (version 1.5.0)
+# Rattle (version 1.6.0)
 A new imperative programming language designed to have no necessary boilerplate
 
 [Click here](https://rattleinterpreter.pythonanywhere.com/) to try out some code of your own!
@@ -11,8 +11,8 @@ Rattle is a very versatile language - it works on a 100-slot circular data tape,
 Basics
 =
 
-To take input or declare variables, your code simply needs the `|` character - data types are recognised automatically. If you want to take multiple inputs or create lists, you can separate them with `&`. In order to use different functions in your code, you simply have to use the following format and call functions with `f0`, `f1`, etc.:
-            `VARIABLES (or leave blank to prompt for input) | MAIN_METHOD; FUNCTION_0; FUNCTION_1; FUNCTION_2 ...`
+To take input or declare variables, your code simply needs the `|` character - data types are recognised automatically. If you want to take multiple inputs or create lists, you can separate them with `&`. In order to use different functions in your code, you simply have to use the following format and call functions with `fN` where N is an integer for global functions and `FN` for local functions:
+            `VARIABLES (or leave blank to prompt for input) | MAIN_METHOD; GLOBAL_FUNCTION_0; GLOBAL_FUNCTION_1; ...GLOBAL_FUNCTION_N: LOCAL_FUNCTION_0: LOCAL_FUNCTION_1: ...LOCAL_FUNCTION_N`
 
 To call commands in Rattle, you need to use one of the single-letter commands (the single character seen inside quotation marks in the long list below). Many commands have functionality without arguments, but arguments can be added by placing the argument immediately after the command (for example, `+2`, `=5`, `%3`, `p` are all valid commands). To use more than one command, simply string them together (e.g. `=5 %3 p` would set the current value to 5, take mod(3) of the value, and print the value to output `2`). Whitespace is optional, and you can even pass strings as arguments to a lot of functions.
 
@@ -52,10 +52,15 @@ In Rattle, there are many commands you can use:
             "i":printInteger,                   #prints value as int
             "q":quitProgram,                    #force-stops execution
             "I":storeInput,                     #parses and stores input
-            "f":executeFunction,                #executes functions - when used without an argument, acts as a return statement
-            "d":debugIndex                      #prints "d(arg) has been executed" - useful for debugging code
-            "n":getInteger                      #converts value to int
+            "f":executeFunction,                #executes global functions - when used without an argument, acts as a return statement
+            "d":debugIndex,                     #prints "d(arg) has been executed" - useful for debugging code
+            "n":getInteger,                     #converts value to int
+            "e":exponentiate,                   #exponential functions
+            "F":executeLocalFunction,           #executes local functions - when used without an argument, acts as a return statement
+            "l":listOperation                   #initiates and manipulates lists
 
+
+New in 1.6: Local functions (and much more)! Local functions can be used to perform complex tasks without changing anything in the main data tape. For example, a local function could take the top of the stack and return a value based on whether that value is prime, without changing any pre-existing variables in memory. This makes development of larger programs significantly easier. Also new: better list/array handling, randomness.
 
 New in 1.5: Better arguments! Now, round brackets "(", ")" can be used to pass more complex arguments to functions. Example: `=(2*4/3)` will set the top of the stack to 2.66...
                   Note that special characters can be used in the round-bracket arguments - you can use `~`,``` ` ```,`@`, etc.
@@ -107,6 +112,6 @@ Going from left to right,
 Upcoming releases
 =
 
-Randomness
+
 
 Want to see your ideas implemented? Email [rattleinterpreter@gmail.com](mailto:rattleinterpreter@gmail.com)
