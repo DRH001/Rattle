@@ -3,11 +3,10 @@
 Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
-@version: 1.5.0
 
-Updated 2021-08-22 21:00 EST
+Updated 2022-02-06 13:00 EST
 """
-
+version_ = "1.6.0"
 
 """
 to do:
@@ -93,6 +92,13 @@ For input:
 
 
 """
+
+
+import random
+
+
+
+
 #import os
 errout_ = ""
 output_ = ""
@@ -115,85 +121,82 @@ def printout(str_, end="\n"):
     output_ += str(str_) + end
 
 
+class variables():
+    pass
 
-def parse(code):
+class localVariables():
+    pass
 
-    global main
-    global functions
-    global repeat
-    global outputAtEnd
-    global topOfStack
-    global storage
-    global pointer
-    global loopCounter
-    #global loopStart
-    global currentCommandIndex
-    global loopEnd
-    global commands
-    global loopList
-    global commandsCopy
-    global storedArray
-    global secondArg
-    global argFlag
-    global printBuffer
-    global argFlag2
-    global functions
-    global commands
-    global currentCommandIndex
-    global skipTo
-    global endFunctionFlag
-    global inFunction
-    global functionCommandList
-    global currentCommandIndexF
-    global currentFunction
-    global commandsCopyF
-    global pieces
-    global intoLoopArgs
-    global errout_
-    global loopIterator
-    global loopOrIf
+
+class newLocalVariables():
+    pass
+
+
+classList = []
+
+
+v = variables
+
+def parse(code, topLevel = True):
+    global v
+    global classList
+    if(topLevel):
+        v = variables
+    else:
+        #localVariables = copy.deepcopy(newLocalVariables)
+        #classList.append(copy.deepcopy(localVariables))
+        classList.append(newLocalVariables())
+        v = classList[-1]
+        #v = localVariables
+        #print(code)
     
     
     
-    loopOrIf = []
+    
+    v.loopOrIf = []
 
-    intoLoopArgs = []
-    loopIterator = []
+    v.intoLoopArgs = []
+    v.loopIterator = []
 
-    currentFunction = -1
-    currentCommandIndexF = []
-    functionCommandList = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]] #this is the limit for no. of fns
-    commandsCopyF = functionCommandList
+    v.currentFunction = -1
+    v.currentCommandIndexF = []
+    v.functionCommandList = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]] #this is the limit for no. of fns
+    #localFunctionCommandList = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]] #this is the limit for no. of fns
+    v.commandsCopyF = v.functionCommandList
+    
+    v.localFunctions = []
+    
+    
+    
+    v.inFunction = False
 
-    inFunction = False
+    v.endFunctionFlag = False
 
-    endFunctionFlag = False
+    v.skipTo = []
 
-    skipTo = []
-
-    currentCommandIndex = 0
+    v.currentCommandIndex = 0
     #loopStart = 0
     #loopCounter = 0
-    pointer = 0
-    storage = [0] * 100
-    topOfStack = 0
-    loopList = []
-    storedArray = []
-    secondArg = None
-    argFlag = False
-    argFlag2 = False
-    printBuffer = []
+    v.pointer = 0
+    v.storage = [0] * 100
+    v.topOfStack = 0
+    v.loopList = []
+    v.storedArray = []
+    v.secondArg = None
+    v.argFlag = False
+    v.argFlag2 = False
+    v.printBuffer = []
 
 
-    outputAtEnd = True
-    commandsCopy = None
+    v.outputAtEnd = True
+    v.commandsCopy = None
 
     #don't handle errors for now
 
 
 
     '''
-    input|main;function1;function2......functionN; [then add arguments here which are stored to a local storage with max of 100 values] <-- NOT pushed to stack, separated by ,
+    input|main;function0;function1......functionN:Function0:Function1.....FunctionN [then add arguments here which are stored to a local storage with max of 100 values] <-- NOT pushed to stack, separated by ,
     if | is the first character, input is taken through input(). If there is a "|", then whatever comes before it is pushed to stack. Otherwise, no input
 
     if the first character in main is a number, then the main method will be repeated that many times (i.e 1main will run twice) -> special case, 0 -> repeats 10 additional times (for 11 times total)
@@ -201,25 +204,38 @@ def parse(code):
     '''
 
     #code = code.replace(" ","")
-    pieces = code.split(";")
+    
+    #split code into input, main, functions, localFunctions:
+    
+    v.code = code
+    if(":" in v.code):
+        temp = v.code.split(":")
+        v.localFunctions = temp[1:]
+        v.code = temp[0]
+    
+    v.pieces = v.code.split(";")
+    
+    #import re
+    #pieces = re.split(";|:", code)
+    #pieces = code.split(";:",str)
 
-    main = pieces[0]
+    v.main = v.pieces[0]
 
     global inputs
     try:
-        if("|" in main):
+        if("|" in v.main):
 
-            if(main.split("|")[0] == ""):
-                topOfStack = inputs.pop(0)
+            if(v.main.split("|")[0] == ""):
+                v.topOfStack = inputs.pop(0)
 
             else:
-                topOfStack = main.split("|")[0]
+                v.topOfStack = v.main.split("|")[0]
 
-            main = main.split("|")[1]#.replace(" ","").replace("\n","")
+            v.main = v.main.split("|")[1]#.replace(" ","").replace("\n","")
             
             openString = False
             newMain = ""
-            for char in main:
+            for char in v.main:
                 if(char == "\""):
                     if(not(openString)):
                         openString = True
@@ -230,22 +246,22 @@ def parse(code):
                     pass
                 else:
                     newMain = newMain + char
-            main = newMain
+            v.main = newMain
             
             #print(main)
             
             
-            if(main == ""):
-                printout(topOfStack)
+            if(v.main == ""):
+                printout(v.topOfStack)
                 return
 
-            for char in topOfStack:
+            for char in v.topOfStack:
                 if(char == '\\'):
-                    topOfStack = topOfStack.replace("\\", inputs.pop(0),1)
+                    v.topOfStack = v.topOfStack.replace("\\", inputs.pop(0),1)
 
         else:
-            outputAtEnd = False
-            main = main.replace(" ","").replace("\n","")
+            v.outputAtEnd = False
+            v.main = v.main.replace(" ","").replace("\n","")
     except:
         errorout("Input error. Please ensure you have given the program the correct number of inputs!")
         return
@@ -256,44 +272,44 @@ def parse(code):
     temp1 = []#auto-parses the input as what it should be
     temp2 = None
     try:
-        topOfStack = topOfStack.split("&")
-        for elem in topOfStack:
+        v.topOfStack =v. topOfStack.split("&")
+        for elem in v.topOfStack:
             try:
                 exec("a = " + str(elem))
                 temp2 = locals()["a"]
             except:
                 temp2 = elem
             temp1.append(temp2)
-        topOfStack = temp1
+        v.topOfStack = temp1
 
-        if(len(topOfStack) == 1):
-            topOfStack = topOfStack[0]
+        if(len(v.topOfStack) == 1):
+            v.topOfStack = v.topOfStack[0]
     except:
         try:
-            exec("a = " + str(topOfStack))
-            topOfStack = locals()["a"]
+            exec("a = " + str(v.topOfStack))
+            v.topOfStack = locals()["a"]
         except:
             pass
 
+    cleanTopOfStack()
 
+    v.functions = v.pieces[1::]
 
-    functions = pieces[1::]
-
-    for i in range(len(functions)):
-        functions[i] = functions[i].replace(" ","")
+    for i in range(len(v.functions)):
+        v.functions[i] = v.functions[i].replace(" ","")
 
 
     try:
-        repeat = int(main[0])
-        main = main[1::]
-        if(repeat == 0):
-            repeat = 10
-        repeat = repeat + 1
+        repeat = int(v.main[0])
+        v.main = v.main[1::]
+        if(v.repeat == 0):
+            v.repeat = 10
+        v.repeat = v.repeat + 1
     except:
-        repeat = 1
+        v.repeat = 1
 
-    commands = getCommandList(main,repeat)
-    commandsCopy = getCommandList(main, repeat)
+    v.commands = getCommandList(v.main,v.repeat)
+    v.commandsCopy = getCommandList(v.main, v.repeat)
 
     #print(topOfStack, main, functions, repeat, commands)
 
@@ -311,15 +327,14 @@ def parse(code):
     start = currentTime()
 
 
-    global firstError
-    firstError = True
+    v.firstError = True
 
-    while(currentCommandIndex < len(commands)):
+    while(v.currentCommandIndex < len(v.commands)):
         try:
-            runCommand(commands[currentCommandIndex])
+            runCommand(v.commands[v.currentCommandIndex])
         except Exception as error:
             error_string = str(error)
-            errorout("Error: " + error_string + " at command index " + str(currentCommandIndex) + " [" + str(commands[currentCommandIndex]) + "]")
+            errorout("Error: " + error_string + " at command index " + str(v.currentCommandIndex) + " [" + str(v.commands[v.currentCommandIndex]) + "]")
             if(running):
                 global output_
                 global errout_
@@ -327,7 +342,7 @@ def parse(code):
                 print(errout_)
                 raise(error)
             return
-        currentCommandIndex += 1
+        v.currentCommandIndex += 1
         #print("HERE!!!")
 
         if(currentTime() > start + 4):
@@ -337,12 +352,12 @@ def parse(code):
 
 
 
-
-    #check for end flags: no output, output last character, etc
-    if(printBuffer != []):
-        printout("".join(printBuffer))
-    elif(outputAtEnd):
-        printout(topOfStack)
+    if(topLevel):
+        #check for end flags: no output, output last character, etc
+        if(v.printBuffer != []):
+            printout("".join(v.printBuffer))
+        elif(v.outputAtEnd):
+            printout(v.topOfStack)
 
 
 
@@ -350,6 +365,8 @@ def parse(code):
 
 def getCommandList(f, rep):
 
+    #f.replace("\n","")
+    
     possibleArgs = "0123456789~`@&^?._#()"# & represents a spacer in case some functions need lots of arguments
     
     #^ and ? are argument flags
@@ -362,11 +379,12 @@ def getCommandList(f, rep):
         if(f[i] == "\"" and closed): #let strings exist as args
             closed = False
         elif(closed == False):
-            tempList[-1] = last + f[i]
+            if(not(f[i] == "\"")):
+                tempList[-1] = last + f[i]
             last = tempList[-1]
             if(f[i] == "\""):
                 closed = True
-                tempList[-1] = tempList[-1][:-1]
+                tempList[-1] = tempList[-1][:-1]#not sure if this is necessary
         elif(f[i] == "(" and closedRoundBracket): #let args exist in round brackets
             closedRoundBracket = False
         elif(closedRoundBracket == False):
@@ -389,14 +407,14 @@ def getCommandList(f, rep):
 
 
 def solveArg(arg):
-    global argRaw
+    #global argRaw
     try:
         l = locals()
         
         arg2 = "x="+ str(arg)
         exec(arg2, locals())
         arg = l["x"]
-        argRaw = arg
+        v.argRaw = arg
     except:
         pass
     
@@ -406,69 +424,69 @@ def solveArg(arg):
 
 
 def runCommand(c):
-    global storage
-    global pointer
-    global argFlag
-    global argFlag2
-    global argRaw
-    global loopIterator
+    #global storage
+    #global pointer
+    #global argFlag
+    #global argFlag2
+    #global argRaw
+    #global loopIterator
 
     func = c[0]
 
     arg = c[1::]
-    argRaw = arg
+    v.argRaw = arg
     
-    inLoop = func == "]" and arg != None and arg != "" and (loopOrIf == [] or loopOrIf[-1])
+    inLoop = func == "]" and arg != None and arg != "" and (v.loopOrIf == [] or v.loopOrIf[-1])
 
     if("^" in arg):
         arg = arg.replace("^","")
-        argFlag = True
+        v.argFlag = True
     else:
-        argFlag = False
+        v.argFlag = False
 
     if("?" in arg):
         arg = arg.replace("?","")
-        argFlag2 = True
+        v.argFlag2 = True
     else:
-        argFlag2 = False
+        v.argFlag2 = False
         
         
     if("_" in arg):
         arg = arg.replace("_","-")
-        argRaw = arg
+        v.argRaw = arg
         
     
 
     if("~" in arg):
         if(inLoop):
-            arg = arg.replace("~",str(intoLoopArgs[-1][1]))
-            argRaw = storage[pointer]
+            arg = arg.replace("~",str(v.intoLoopArgs[-1][1]))
+            v.argRaw = v.storage[v.pointer]
         else:    
-            arg = arg.replace("~",str(int(storage[pointer])))
-            argRaw = storage[pointer]
+            arg = arg.replace("~",str(int(v.storage[v.pointer])))
+            v.argRaw = v.storage[v.pointer]
             
             
         #ADD CASE FOR inFunction as well!!!!!!!!!!!!!!!!!!! @todo
 
     if("`" in arg):
         if(inLoop):
-            arg = arg.replace("`",str(intoLoopArgs[-1][0]))
-            argRaw = topOfStack
+            arg = arg.replace("`",str(v.intoLoopArgs[-1][0]))
+            v.argRaw = v.topOfStack
         else:    
-            arg = arg.replace("`",str(int(topOfStack)))
-            argRaw = topOfStack
+            arg = arg.replace("`",str(int(v.topOfStack)))
+            v.argRaw = v.topOfStack
 
     if("@" in arg):
         if(inLoop):
-            arg = arg.replace("@",str(intoLoopArgs[-1][2]))
+            arg = arg.replace("@",str(v.intoLoopArgs[-1][2]))
         else:    
-            arg = arg.replace("@",str(int(pointer)))
+            arg = arg.replace("@",str(int(v.pointer)))
         
         
     if("#" in arg): #NEEDS TO BE REPLACED LAST
         if("#" == arg):
-            arg = str(int(loopIterator[-1]))
-            argRaw = arg
+            arg = str(int(v.loopIterator[-1]))
+            v.argRaw = arg
         else:
             
             import re
@@ -481,7 +499,7 @@ def runCommand(c):
             for i in range(len(pieces)):
                 if("#" in pieces[i]):
                    coarg = int(pieces[i].replace("#",""))
-                   pieces[i] = loopIterator[-(1+coarg)]
+                   pieces[i] = v.loopIterator[-(1+coarg)]
                    arg = arg.replace(str(piecesCopy[i]), str(pieces[i]), 1)
                    
             
@@ -494,13 +512,14 @@ def runCommand(c):
     #print(arg, type(arg))
 
     arg = solveArg(arg)
-
+    if(type(arg) == tuple):
+        arg = list(arg)
 
     #print("here3", arg)
 
     if(arg != ""): #PARSE ARG AS INT OR FLOAT IF POSSIBLE
         try:
-            argRaw = float(argRaw)
+            v.argRaw = float(v.argRaw)
             if("." in arg):
                 arg = float(arg)
             else:
@@ -567,7 +586,9 @@ def runCommand(c):
             "f":executeFunction,
             "d":debugIndex,
             "n":getInteger,
-            "e":exponentiate
+            "e":exponentiate,
+            "F":executeLocalFunction,
+            "l":listOperation
 
             }
 
@@ -581,78 +602,86 @@ def runCommand(c):
     #add a flag which can order a function to run locally - i.e. not affecting main memory
     #calling 'f' without an argument ends the current function
 def executeFunction(functionIndex):
-    global inFunction
-    global functions
-    global commands
-    global skipTo
-    global currentCommandIndex
-    global endFunctionFlag
-    global commandsCopyF
-    global functionCommandList
-    global currentCommandIndexF
-    global currentFunction
-    global loopList
-    global firstError
+    #global inFunction
+    #global functions
+    #global commands
+    #global skipTo
+    #global currentCommandIndex
+    #global endFunctionFlag
+    #global commandsCopyF
+    #global functionCommandList
+    #global currentCommandIndexF
+    #global currentFunction
+    #global loopList
+    #global firstError
 
-    inFunction = True
+    v.inFunction = True
 
     #print("function: ", functionIndex)
 
     if(functionIndex == None):
-        endFunctionFlag = True
+        v.endFunctionFlag = True
 
-        while(currentCommandIndexF[-1] < len(functionCommandList[currentFunction])):
-            if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
-                del loopList[-1]
-            if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
-                loopList.append(0)
+        while(v.currentCommandIndexF[-1] < len(v.functionCommandList[v.currentFunction])):
+            if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "]"):
+                del v.loopList[-1]
+            if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "]"):
+                v.loopList.append(0)
 
-            currentCommandIndexF[-1] += 1
+            v.currentCommandIndexF[-1] += 1
         #currentCommandIndex = skipTo.pop(-1)
         #print("skipTo after pop: ", skipTo)
     else:
-        currentFunction = functionIndex
-        functionCommandList[currentFunction] = getCommandList(functions[functionIndex],1)
-        commandsCopyF[currentFunction] = getCommandList(functions[functionIndex],1)
-
+        v.currentFunction = functionIndex
+        v.functionCommandList[v.currentFunction] = getCommandList(v.functions[functionIndex],1)
+        
+        
+        
+        v.commandsCopyF[v.currentFunction] = getCommandList(v.functions[functionIndex],1)
+        
+        try:
+            v.functionCommandList[v.currentFunction].remove("\n")
+            v.commandsCopyF[v.currentFunction].remove("\n")
+        except:
+            pass
 
 
         from time import perf_counter as currentTime
         start = currentTime()
 
-        currentCommandIndexF.append(0)
-        while(currentCommandIndexF[-1] < len(functionCommandList[currentFunction])):
+        v.currentCommandIndexF.append(0)
+        while(v.currentCommandIndexF[-1] < len(v.functionCommandList[v.currentFunction])):
 
-            if(endFunctionFlag):
-                endFunctionFlag = False
+            if(v.endFunctionFlag):
+                v.endFunctionFlag = False
                 break
 
-            inFunction = True
+            v.inFunction = True
             try:
-                runCommand(functionCommandList[currentFunction][currentCommandIndexF[-1]])
+                runCommand(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]])
             except Exception as error:
                 error_string = str(error)
-                if(firstError):
-                    errorout("Error: " + error_string + " in function " + str(currentFunction) + " at function command index " + str(currentCommandIndexF[-1]) + " [" + str(functionCommandList[currentFunction][currentCommandIndexF[-1]]) + "]")
-                    firstError = False
+                if(v.firstError):
+                    errorout("Error: " + error_string + " in function " + str(v.currentFunction) + " at function command index " + str(v.currentCommandIndexF[-1]) + " [" + str(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]]) + "]")
+                    v.firstError = False
                 else:
-                    errorout("Error: " + error_string + " at function command index " + str(currentCommandIndexF[-1]) + " [" + str(functionCommandList[currentFunction][currentCommandIndexF[-1]]) + "]")
+                    errorout("Error: " + error_string + " at function command index " + str(v.currentCommandIndexF[-1]) + " [" + str(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]]) + "]")
 
 
-                currentCommandIndexF.pop(-1)
-                currentFunction = functionIndex
-                raise(Exception("error in function " + str(currentFunction)))
-            currentCommandIndexF[-1] += 1
+                v.currentCommandIndexF.pop(-1)
+                v.currentFunction = functionIndex
+                raise(Exception("error in function " + str(v.currentFunction)))
+            v.currentCommandIndexF[-1] += 1
 
             if(currentTime() > start + 5):
                 printout("Program timed out. Did you forget your exit condition?")
                 return
 
-            currentFunction = functionIndex
+            v.currentFunction = functionIndex
 
         #print("done function: ", functionIndex)
         #print(functionCommandList, currentCommandIndexF)
-        currentCommandIndexF.pop(-1)
+        v.currentCommandIndexF.pop(-1)
         #for i in range(len(skipTo)):
         #    skipTo[i] += len(functionCommandList)
 
@@ -666,7 +695,7 @@ def executeFunction(functionIndex):
     #print(commands)
 
     #don't parse a function - insert its operations into queue
-    inFunction = False
+    v.inFunction = False
 
 def debugIndex(arg):
     printout("d" + str(arg) + " has been executed")
@@ -691,38 +720,60 @@ def reformat(arg):
 
 
 def mint(sigdigs=0):
-    global topOfStack
+    #global topOfStack
     if(sigdigs == 0):
-        topOfStack = int(float(topOfStack))
+        v.topOfStack = int(float(v.topOfStack))
         return
     else:
         from math import log
-        b = int(log(float(topOfStack),10))
-        topOfStack = int(float(topOfStack)/10**(b+1-sigdigs)) *10**(b+1-sigdigs)
+        b = int(log(float(v.topOfStack),10))
+        v.topOfStack = int(float(v.topOfStack)/10**(b+1-sigdigs)) *10**(b+1-sigdigs)
 
 def mstr(arg=0):
-    global topOfStack
+    #global topOfStack
     if(arg == 0 or arg == None):
-        topOfStack = str(topOfStack)
+        v.topOfStack = str(v.topOfStack)
     else:
-        topOfStack = topOfStack[arg:-(arg)]
+        v.topOfStack = v.topOfStack[arg:-(arg)]
 
 def mfloat(sigdigs=0):
-    global topOfStack
+    #global topOfStack
     if(sigdigs == 0):
-        topOfStack = float(topOfStack)
+        v.topOfStack = float(v.topOfStack)
     else:
-        topOfStack = round(float(topOfStack), sigdigs)
+        v.topOfStack = round(float(v.topOfStack), sigdigs)
 
 
 
-
+def cleanTopOfStack():
+    #makes any values in the top of the stack into an int if possible without loss of precision
+    #global topOfStack
+    
+    if(type(v.topOfStack) == tuple):
+        v.topOfStack = list(v.topOfStack)
+    
+    
+    if(type(v.topOfStack) != list):
+        try:
+            if(v.topOfStack == int(v.topOfStack)):
+                v.topOfStack = int(v.topOfStack)
+        except:
+            pass
+        return
+    
+    for i in range(len(v.topOfStack)):
+        try:
+            if(v.topOfStack[i] == int(v.topOfStack[i])):
+                v.topOfStack[i] = int(v.topOfStack[i])
+        except:
+            pass
+        
 
 
 def helloWorld(arg):#hello, world with variants
-    if(argFlag):#given ^ as arg
+    if(v.argFlag):#given ^ as arg
         printout("Hello world")
-    elif(argFlag2):#given ? as arg
+    elif(v.argFlag2):#given ? as arg
         printout("Hello world!")
     elif(arg == None):
         printout("Hello, World!")
@@ -735,180 +786,220 @@ def helloWorld(arg):#hello, world with variants
 def add(arg):#add arg to stack
     #adds 1 to top of stack
     #given arg, adds arg to top of stack
-    global topOfStack
-    global argRaw
-    
+    #global topOfStack
+    #global argRaw
     
     #print(arg, type(arg))
-    if(type(topOfStack) == str and type(arg) == str):
-        topOfStack = topOfStack + arg
+    if(type(v.topOfStack) == str or type(arg) == str):
+        v.topOfStack = str(v.topOfStack) + str(arg)
         return
+    
+    
+    
+    
+    if(type(v.topOfStack) == list):
+        if(arg==None):
+            v.topOfStack = [elem + 1 for elem in v.topOfStack]
+        else:
+            v.topOfStack = [elem + v.argRaw for elem in v.topOfStack]
+        cleanTopOfStack()
+        return()
     
     mfloat()
     
     if(arg==None):
-        topOfStack += 1
+        v.topOfStack += 1
     else:
-        topOfStack += argRaw
-    if(topOfStack == int(topOfStack)):
-        topOfStack = int(topOfStack)
+        v.topOfStack += v.argRaw
+    cleanTopOfStack()
 
 def subtract(arg):#subtract arg from stack
     #subtracts 1 from top of stack
     #given arg, subtracts arg from top of stack
-    global topOfStack
+    #global topOfStack
     
-    if(type(topOfStack) == str and type(arg) == str):
-        topOfStack = topOfStack.replace(arg, "")
+    if(type(v.topOfStack) == str or type(arg) == str):
+        v.topOfStack = v.topOfStack.replace(arg, "")
         return
+    
+    
+    if(type(v.topOfStack) == list):
+        if(arg==None):
+            v.topOfStack = [elem - 1 for elem in v.topOfStack]
+        else:
+            v.topOfStack = [elem - v.argRaw for elem in v.topOfStack]
+        cleanTopOfStack()
+        return()
+    
+    
     
     mfloat()
     if(arg==None):
-        topOfStack -= 1
+        v.topOfStack -= 1
     else:
-        topOfStack -= argRaw
-    if(topOfStack == int(topOfStack)):
-        topOfStack = int(topOfStack)
+        v.topOfStack -= v.argRaw
+    cleanTopOfStack()
 
 def divide(arg):#divide stack/arg
     #divides the top of stack by 2
     #given 0 as arg, divides top of stack by 10
     #given other arg, divides top of stack by arg
-    global topOfStack
+    #global topOfStack
+    
+    if(type(v.topOfStack) == list):
+        if(arg==None):
+            v.topOfStack = [elem / 2 for elem in v.topOfStack]
+        else:
+            v.topOfStack = [elem / v.argRaw for elem in v.topOfStack]
+        cleanTopOfStack()
+        return()
+    
+    
     mfloat()
     if(arg==None):
-        topOfStack /= 2
-    elif(argRaw == 0):
-        topOfStack /= 10
+        v.topOfStack /= 2
+    #elif(argRaw == 0):
+    #    topOfStack /= 10
     else:
-        topOfStack /= argRaw
-    if(topOfStack == int(topOfStack)):
-        topOfStack = int(topOfStack)
+        v.topOfStack /= v.argRaw
+    if(v.topOfStack == int(v.topOfStack)):
+        v.topOfStack = int(v.topOfStack)
 
 def multiply(arg):#stack*=arg
     #multiplies the top of stack by 2
     #given 0 as arg, multiplies top of stack by 10
     #given other arg, multiplies top of stack by arg
-    global topOfStack
+    #global topOfStack
     #mfloat()
+    
+    if(type(v.topOfStack) == list):
+        if(arg==None):
+            v.topOfStack = [elem * 2 for elem in v.topOfStack]
+        else:
+            v.topOfStack = [elem * v.argRaw for elem in v.topOfStack]
+        cleanTopOfStack()
+        return()
+    
+    
+    
     if(arg==None):
-        topOfStack *= 2
-    elif(argRaw == 0):
-        topOfStack *= 10
+        v.topOfStack *= 2
+    #elif(argRaw == 0):
+    #    topOfStack *= 10
     else:
-        topOfStack *= argRaw
-    if(type(topOfStack) != str and topOfStack == int(topOfStack)):
-        topOfStack = int(topOfStack)
+        v.topOfStack *= v.argRaw
+    if(type(v.topOfStack) != str and v.topOfStack == int(v.topOfStack)):
+        v.topOfStack = int(v.topOfStack)
 
 
 def store(arg):#if the arg is None, it should instead use the current pointer
     #stores the top of the stack at the current pointer
     #given an arg, stores the top of the stack at arg in storage
-    global storage
-    global topOfStack
+    #global storage
+    #global topOfStack
     
     if(type(arg) == str):
-        storage[pointer] = arg    
+        v.storage[v.pointer] = arg    
     elif(arg != None):
-        storage[arg] = topOfStack
+        v.storage[arg] = v.topOfStack
     else:
-        storage[pointer] = topOfStack
+        v.storage[v.pointer] = v.topOfStack
 
 def get(arg):
     #sets the top of the stack to the value at the pointer
     #given an arg, sets the top of the stack to the value at arg
-    global storage
-    global topOfStack
+    #global storage
+    #global topOfStack
     if(arg != None):
-        topOfStack = storage[arg]
+        v.topOfStack = v.storage[arg]
     else:
-        topOfStack = storage[pointer]
+        v.topOfStack = v.storage[v.pointer]
 
 def pointerUp(arg):
     #moves the pointer up
     #given an arg, moves the pointer up arg places
-    global pointer
+    #global pointer
     if(arg == None):
-        if(pointer != 99):
-            pointer += 1
+        if(v.pointer != 99):
+            v.pointer += 1
         else:
-            pointer = 0
+            v.pointer = 0
     else:
         for i in range(arg):
-            if(pointer != 99):
-                pointer += 1
+            if(v.pointer != 99):
+                v.pointer += 1
             else:
-                pointer = 0
+                v.pointer = 0
 
 
 def pointerDown(arg):
     #moves the pointer down
     #given an arg, moves the pointer down arg places
-    global pointer
+    #global pointer
     if(arg == None):
-        if(pointer != 0):
-            pointer -= 1
+        if(v.pointer != 0):
+            v.pointer -= 1
         else:
-            pointer = 99
+            v.pointer = 99
     else:
         for i in range(arg):
-            if(pointer != 0):
-                pointer -= 1
+            if(v.pointer != 0):
+                v.pointer -= 1
             else:
-                pointer = 99
+                v.pointer = 99
 
 
 def setPointer(arg):
     #sets the pointer to the arg
-    global pointer
+    #global pointer
 
     if(arg == None):
-        pointer = 0
+        v.pointer = 0
     else:
-        pointer = int(arg)
+        v.pointer = int(arg)
 
 
 def prnt(arg):
     #prints the value at the top of the stack
     #given an arg, prints the value at the arg in storage
-    global topOfStack
-    global storage
-    global pointer
+    #global topOfStack
+    #global storage
+    #global pointer
     #print(arg)
     if(type(arg)==str):
         printout(arg)
     elif(arg == None):
-        printout(topOfStack)
+        printout(v.topOfStack)
     else:
-        printout(storage[arg])
+        printout(v.storage[arg])
 
 def flag(arg):
     #used to define special flags:
     #  ! turns off the implicit output at the EOF (which is only turned on if input is taken)
-    global outputAtEnd
+    #global outputAtEnd
     if(arg==None):
-        outputAtEnd = False
+        v.outputAtEnd = False
 
 
 def concat(arg):
     #concatenates the value at arg to the top of the stack
-    global storage
-    global topOfStack
-    global pointer
+    #global storage
+    #global topOfStack
+    #global pointer
 
     if(type(arg)==str):
-        topOfStack = str(topOfStack) + arg
+        v.topOfStack = str(v.topOfStack) + arg
     elif(arg == None):
-        topOfStack = str(topOfStack) + str(storage[pointer])
+        v.topOfStack = str(v.topOfStack) + str(v.storage[v.pointer])
     else:
-        topOfStack = str(topOfStack) + str(storage[arg])
+        v.topOfStack = str(v.topOfStack) + str(v.storage[arg])
 
 
 import copy
 def startLoop(arg):
     #starts the loop - given an arg, only runs what's inside the loop iff the value on the stack is equal to the arg
     #if argFlag (i.e. ^) then it's an inverted if statement
-    global currentCommandIndex
+    '''global currentCommandIndex
     global storage
     global loopList
     global commands
@@ -921,101 +1012,101 @@ def startLoop(arg):
     global topOfStack
     global pointer
     global loopIterator
-    global loopOrIf
+    global loopOrIf'''
 
     
-    loopIterator.append(0)
+    v.loopIterator.append(0)
     #printout("LOOP")
 
     try:
         if (arg == None):#FOR LOOP!
             #loopIterator.append(0)
-            loopOrIf.append(True)
-            intoLoopArgs.append([topOfStack, storage[pointer], pointer, copy.deepcopy(storage)])
+            v.loopOrIf.append(True)
+            v.intoLoopArgs.append([v.topOfStack, v.storage[v.pointer], v.pointer, copy.deepcopy(v.storage)])
         else: #IF STATEMENT
-            loopOrIf.append(False)
+            v.loopOrIf.append(False)
     except:
         try:
             if (arg == None):
-                intoLoopArgs.append([0, storage[pointer], pointer, copy.deepcopy(storage)])
+                v.intoLoopArgs.append([0, v.storage[v.pointer], v.pointer, copy.deepcopy(v.storage)])
         except:
             print("Unhandled error. Please send your code to rattleinterpreter@gmail.com and a fix will be issued soon!")
 
     #print(arg == topOfStack, argFlag)
 
-    if(not(inFunction)):
-        loopList.append(currentCommandIndex)###
+    if(not(v.inFunction)):
+        v.loopList.append(v.currentCommandIndex)###
         if(arg == None or arg == ""): #case where the other bracket has an argument
             pass
-        elif(argFlag):
-            if(str(arg) == str(topOfStack)):
+        elif(v.argFlag):
+            if(str(arg) == str(v.topOfStack)):
                 #print("HERE!")
                 #skip until the closing bracket
                 
                 closed = False
                 opens = 1
                 while(not(closed)):
-                    currentCommandIndex += 1
-                    if(commands[currentCommandIndex][0] == "["):
+                    v.currentCommandIndex += 1
+                    if(v.commands[v.currentCommandIndex][0] == "["):
                         opens += 1
-                    if(commands[currentCommandIndex][0] == "]"):
+                    if(v.commands[v.currentCommandIndex][0] == "]"):
                         opens -= 1
                         if(opens == 0):
                             closed = True
-                currentCommandIndex -= 1
+                v.currentCommandIndex -= 1
                 #print("HERE!", commands[currentCommandIndex])
         else:
             #print(arg, topOfStack)
-            if(not(str(arg) == str(topOfStack))):
+            if(not(str(arg) == str(v.topOfStack))):
                 #skip until the closing bracket
                 
                 closed = False
                 opens = 1
                 while(not(closed)):
-                    currentCommandIndex += 1
-                    if(commands[currentCommandIndex][0] == "["):
+                    v.currentCommandIndex += 1
+                    if(v.commands[v.currentCommandIndex][0] == "["):
                         opens += 1
-                    if(commands[currentCommandIndex][0] == "]"):
+                    if(v.commands[v.currentCommandIndex][0] == "]"):
                         opens -= 1
                         if(opens == 0):
                             closed = True
-                currentCommandIndex -= 1
+                v.currentCommandIndex -= 1
             #if statement..... based on stuff in storage (with a flag or something)
     else:
-        loopList.append(currentCommandIndexF[currentFunction])
+        v.loopList.append(v.currentCommandIndexF[v.currentFunction])
         if(arg == None or arg == ""): #case where the other bracket has an argument
             pass
-        elif(argFlag):
-            if(str(arg) == str(topOfStack)):
+        elif(v.argFlag):
+            if(str(arg) == str(v.topOfStack)):
                 #skip until the closing bracket
                 closed = False
                 opens = 1
                 while(not(closed)):
-                    currentCommandIndexF[-1] += 1
-                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "["):
+                    v.currentCommandIndexF[-1] += 1
+                    if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "["):
                         opens += 1
-                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
+                    if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "]"):
                         opens -= 1
                         if(opens == 0):
                             closed = True
-                currentCommandIndexF[-1] -= 1
+                v.currentCommandIndexF[-1] -= 1
                 
             
         else:
             #print(arg, topOfStack)
-            if(not(str(arg) == str(topOfStack))):
+            if(not(str(arg) == str(v.topOfStack))):
                 #skip until the closing bracket
                 closed = False
                 opens = 1
                 while(not(closed)):
-                    currentCommandIndexF[-1] += 1
-                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "["):
+                    v.currentCommandIndexF[-1] += 1
+                    if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "["):
                         opens += 1
-                    if(functionCommandList[currentFunction][currentCommandIndexF[-1]][0] == "]"):
+                    if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "]"):
                         opens -= 1
                         if(opens == 0):
                             closed = True
-                currentCommandIndexF[-1] -= 1
+                v.currentCommandIndexF[-1] -= 1
 
 
 
@@ -1023,7 +1114,7 @@ def startLoop(arg):
 def endLoop(arg):
     #ends the loop - given an arg, this will loop arg times
     #given a ^, will loop the number of times specified by the value at arg in storage
-    global loopEnd
+    '''global loopEnd
     global currentCommandIndex
     global commands
     global commandsCopy
@@ -1040,11 +1131,11 @@ def endLoop(arg):
     #print("test ", loopList, commands[currentCommandIndex])
     #print(commands)
     global loopIterator
-    global loopOrIf
+    global loopOrIf'''
     
-    loopIterator[-1] += 1
+    v.loopIterator[-1] += 1
 
-    if(inFunction == False):
+    if(v.inFunction == False):
         '''
         if("`" in commands[currentCommandIndex]):
             commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", str(int(topOfStack) + 1))
@@ -1058,14 +1149,14 @@ def endLoop(arg):
 
 
 
-        if("`" in commands[currentCommandIndex]):
-            commands[currentCommandIndex] = commands[currentCommandIndex].replace("`", str(intoLoopArgs[-1][0]))
-        elif("~" in commands[currentCommandIndex]):
-            commands[currentCommandIndex] = commands[currentCommandIndex].replace("~", str(intoLoopArgs[-1][1]))
-        elif("@" in commands[currentCommandIndex]):
-            commands[currentCommandIndex] = commands[currentCommandIndex].replace("@", str(intoLoopArgs[-1][2]))
-        elif("^" in commands[currentCommandIndex]):
-            commands[currentCommandIndex] = "]" + str(int(intoLoopArgs[-1][3][arg]))
+        if("`" in v.commands[v.currentCommandIndex]):
+            v.commands[v.currentCommandIndex] = v.commands[v.currentCommandIndex].replace("`", str(v.intoLoopArgs[-1][0]))
+        elif("~" in v.commands[v.currentCommandIndex]):
+            v.commands[v.currentCommandIndex] = v.commands[v.currentCommandIndex].replace("~", str(v.intoLoopArgs[-1][1]))
+        elif("@" in v.commands[v.currentCommandIndex]):
+            v.commands[v.currentCommandIndex] = v.commands[v.currentCommandIndex].replace("@", str(v.intoLoopArgs[-1][2]))
+        elif("^" in v.commands[v.currentCommandIndex]):
+            v.commands[v.currentCommandIndex] = "]" + str(int(v.intoLoopArgs[-1][3][arg]))
 
 
 
@@ -1073,19 +1164,19 @@ def endLoop(arg):
 
         if(arg == None or arg == ""): #case where the other bracket has arg (i.e. if statement) #END OF LOOP
             #printout("LOOPX")
-            del loopList[-1]
-            del loopIterator[-1]
-            del loopOrIf [-1]
+            del v.loopList[-1]
+            del v.loopIterator[-1]
+            del v.loopOrIf [-1]
             
-        elif(commands[currentCommandIndex][1:] == "1"): #END OF LOOP
+        elif(v.commands[v.currentCommandIndex][1:] == "1"): #END OF LOOP
 
-            commands[currentCommandIndex] = commandsCopy[currentCommandIndex]
+            v.commands[v.currentCommandIndex] = v.commandsCopy[v.currentCommandIndex]
             #print(commands)
             #printout("LOOPX")
-            del loopList[-1]
-            del intoLoopArgs[-1]
-            del loopIterator[-1]
-            del loopOrIf [-1]
+            del v.loopList[-1]
+            del v.intoLoopArgs[-1]
+            del v.loopIterator[-1]
+            del v.loopOrIf [-1]
             
             #commands = commandsCopy##
 
@@ -1096,28 +1187,28 @@ def endLoop(arg):
 
             #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
             l = locals()
-            code_ = "x=" + str(commands[currentCommandIndex][1::])
+            code_ = "x=" + str(v.commands[v.currentCommandIndex][1::])
             exec(code_, locals())
             newArg = l["x"]
             
             
             
-            commands[currentCommandIndex] = commands[currentCommandIndex][0] + str(int(newArg) -1)
+            v.commands[v.currentCommandIndex] = v.commands[v.currentCommandIndex][0] + str(int(newArg) -1)
             #currentCommandIndex = loopStart##
-            currentCommandIndex = loopList[-1]##
+            v.currentCommandIndex = v.loopList[-1]##
 
         #print("test ",loopList,  commands[currentCommandIndex], "\n")
 
     else: #IN FUNCTION
 
-        if("`" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("`", str(intoLoopArgs[-1][0]))
-        elif("~" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("~", str(intoLoopArgs[-1][1]))
-        elif("@" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]].replace("@", str(intoLoopArgs[-1][2]))
-        elif("^" in functionCommandList[currentFunction][currentCommandIndexF[-1]]):
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = "]" + intoLoopArgs[-1][3][arg]
+        if("`" in v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]]):
+            v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]] = v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]].replace("`", str(v.intoLoopArgs[-1][0]))
+        elif("~" in v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]]):
+            v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]] = v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]].replace("~", str(v.intoLoopArgs[-1][1]))
+        elif("@" in v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]]):
+            v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]] = v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]].replace("@", str(v.intoLoopArgs[-1][2]))
+        elif("^" in v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]]):
+            v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]] = "]" + v.intoLoopArgs[-1][3][arg]
 
         '''
         if("`" in commands[currentCommandIndex]):
@@ -1135,17 +1226,17 @@ def endLoop(arg):
 
 
         if(arg == None or arg == ""): #case where the other bracket has arg (i.e. if statement) #END FUNCTION LOOP
-            del loopList[-1]
-            del loopIterator[-1]
-            del loopOrIf [-1]
-        elif(functionCommandList[currentFunction][currentCommandIndexF[-1]][1:] == "1"): #END FUNCTION LOOP
+            del v.loopList[-1]
+            del v.loopIterator[-1]
+            del v.loopOrIf [-1]
+        elif(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][1:] == "1"): #END FUNCTION LOOP
 
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = commandsCopyF[currentFunction][currentCommandIndexF[-1]]
+            v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]] = v.commandsCopyF[v.currentFunction][v.currentCommandIndexF[-1]]
             #print(commands)
-            del loopList[-1]
-            del intoLoopArgs[-1]
-            del loopIterator[-1]
-            del loopOrIf [-1]
+            del v.loopList[-1]
+            del v.intoLoopArgs[-1]
+            del v.loopIterator[-1]
+            del v.loopOrIf [-1]
             #commands = commandsCopy##
 
             #print("here")
@@ -1154,31 +1245,31 @@ def endLoop(arg):
         else:
             #print(commands[currentCommandIndex][0] + str(int(commands[currentCommandIndex][1::])))
             l = locals()
-            code_ = "x=" + str(functionCommandList[currentFunction][currentCommandIndexF[-1]][1::])
+            code_ = "x=" + str(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][1::])
             exec(code_, locals())
             newArg = l["x"]
             
             
-            functionCommandList[currentFunction][currentCommandIndexF[-1]] = functionCommandList[currentFunction][currentCommandIndexF[-1]][0] + str(int(newArg) -1)
+            v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]] = v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] + str(int(newArg) -1)
             #currentCommandIndex = loopStart##
-            currentCommandIndexF[-1] = loopList[-1]##
+            v.currentCommandIndexF[-1] = v.loopList[-1]##
 
 
 
 def modulo(arg):
     #sets the top of the stack to the modulo of the arg (i.e. modulo(3) gives topOfStack % 3)
-    global topOfStack
+    #global topOfStack
     mfloat()
     if(arg == None):
-        topOfStack = topOfStack % 2
+        v.topOfStack = v.topOfStack % 2
     elif(arg == 0):
-        topOfStack = topOfStack % 10
+        v.topOfStack = v.topOfStack % 10
     elif(arg == 1):
-        topOfStack = topOfStack % 100
+        v.topOfStack = v.topOfStack % 100
     else:
-        topOfStack = topOfStack % arg
-    if(topOfStack == int(topOfStack)):
-        topOfStack = int(topOfStack)
+        v.topOfStack = v.topOfStack % arg
+    if(v.topOfStack == int(v.topOfStack)):
+        v.topOfStack = int(v.topOfStack)
 
 
 
@@ -1186,45 +1277,64 @@ def modulo(arg):
 def swap(arg):
     #swaps the top of the stack and the pointed value
     #given an arg, swaps the top of the stack and the value at arg in storage
-    global topOfStack
-    global pointer
-    global storage
+    #global topOfStack
+    #global pointer
+    #global storage
     if(arg == None):
-        tempSwap = storage[pointer]
-        storage[pointer] = topOfStack
-        topOfStack = tempSwap
+        tempSwap = v.storage[v.pointer]
+        v.storage[v.pointer] = v.topOfStack
+        v.topOfStack = tempSwap
     else:
-        tempSwap = storage[arg]
-        storage[arg] = topOfStack
-        topOfStack = tempSwap
+        tempSwap = v.storage[arg]
+        v.storage[arg] = v.topOfStack
+        v.topOfStack = tempSwap
 
 
 def secondArgument(arg):
     #sets the second argument to the arg
-    global secondArg
-    secondArg = arg
+    #global secondArg
+    v.secondArg = arg
 
 
 def topOfStackEquals(arg):
     #sets the top of the stack to the arg (or 0, given no arg)
-    global topOfStack
-    if(arg == None):
-        topOfStack = 0
+    #global topOfStack
+    
+    
+    if(v.argFlag2): #randomness
+        
+        if(arg==None):
+            v.topOfStack = random.random()
+        else:
+            v.topOfStack = random.randint(0,arg-1)
+        
+        
+        
         return
-    topOfStack = arg
+    
+    
+    
+    if(arg == None):
+        v.topOfStack = 0
+        return
+    v.topOfStack = arg
+    
+    
+    
+    
 
 def pointedValueInStorageEquals(arg):
-    global storage
-    global pointer
+    #global storage
+    #global pointer
     if(arg == None):
-        storage[pointer] = 0
+        v.storage[v.pointer] = 0
         return
-    storage[pointer] = arg
+    v.storage[v.pointer] = arg
 
 def stringFunction(arg):
-    global topOfStack
+    #global topOfStack
     if(arg == None): #flip topOfStack
-        topOfStack = str(topOfStack)[::-1] 
+        v.topOfStack = str(v.topOfStack)[::-1] 
         
     pass#define string functions here: flip/reverse, bin/hex (or make new fns for these), decompress (e.g. 126 bit compression), caesar shift
 
@@ -1232,23 +1342,23 @@ def stringFunction(arg):
 def printCharAt(arg):
     #given no arg, prints the char of the int at the top of the stack
     #given an arg, prints the char at the pointer
-    global topOfStack
-    global storage
-    global pointer
-    if(argFlag):
+    #global topOfStack
+    #global storage
+    #global pointer
+    if(v.argFlag):
         if(arg == None):
-            printout(chr(int(topOfStack)))
+            printout(chr(int(v.topOfStack)))
             return
-        printout(chr(int(storage[pointer])))
-    elif(argFlag2):
-        topOfStack = chr(int(topOfStack))
+        printout(chr(int(v.storage[v.pointer])))
+    elif(v.argFlag2):
+        v.topOfStack = chr(int(v.topOfStack))
         return
     else:
         if(arg == None):
             #print("HERE!")
-            printout(chr(int(topOfStack)), end="")
+            printout(chr(int(v.topOfStack)), end="")
             return
-        printout(chr(int(storage[pointer])), end="")
+        printout(chr(int(v.storage[v.pointer])), end="")
 
 
 def arrayInitFunctions(arg):
@@ -1256,11 +1366,11 @@ def arrayInitFunctions(arg):
     # a1_ pushes an array of the bottom arg to stack
     # a2 pushes an array of alternating ones and zeroes - secondarg is none, it starts at 1. secondarg is 0, it starts at 0. Else, it gives an array of secondArray's value and zeroes that alternate, starting with non-zero
     # to add: range, linspace,
-    global topOfStack
-    global storedArray
-    global storage
-    global pointer
-    global secondArg
+    #global topOfStack
+    #global storedArray
+    #global storage
+    #global pointer
+    #global secondArg
 
 
     bottomArg = None
@@ -1275,14 +1385,14 @@ def arrayInitFunctions(arg):
     if(topArg == 1):
         mint()
         if(bottomArg == None):
-            storage[pointer] = [0] * topOfStack
+            v.storage[v.pointer] = [0] * v.topOfStack
             return
 
-        topOfStack = [bottomArg] * topOfStack
+        v.topOfStack = [bottomArg] * v.topOfStack
 
     if(topArg == 2):
         #might need 2nd arg
-        if(secondArg == None):
+        if(v.secondArg == None):
             tempSwitch = 1
             tempArray = []
             for i in range(bottomArg):
@@ -1291,9 +1401,9 @@ def arrayInitFunctions(arg):
                     tempSwitch = 0
                 else:
                     tempSwitch = 1
-            topOfStack = tempArray
+            v.topOfStack = tempArray
 
-        elif(secondArg == 0):
+        elif(v.secondArg == 0):
             tempSwitch = 0
             tempArray = []
             for i in range(bottomArg):
@@ -1302,18 +1412,18 @@ def arrayInitFunctions(arg):
                     tempSwitch = 0
                 else:
                     tempSwitch = 1
-            topOfStack = tempArray
+            v.topOfStack = tempArray
 
         else:
-            tempSwitch = secondArg
+            tempSwitch = v.secondArg
             tempArray = []
             for i in range(bottomArg):
                 tempArray.append(tempSwitch)
                 if(tempSwitch):
                     tempSwitch = 0
                 else:
-                    tempSwitch = secondArg
-            topOfStack = tempArray
+                    tempSwitch = v.secondArg
+            v.topOfStack = tempArray
 
 
 
@@ -1322,8 +1432,8 @@ def arrayOperations(arg):#unfinished
     #might use second arg
     #cycle, shift, reverse, +-*/%, RREF, linearly independant, max/min, max/min per each column/row, average/mode, sum
 
-    global topOfStack
-    global secondArg
+    #global topOfStack
+    #global secondArg
 
     if(arg == None):
         #reverse array
@@ -1344,20 +1454,21 @@ def arrayOperations(arg):#unfinished
 
 def matrixInitFunctions(arg):
     #uses the second argument!!!!!
-    global secondArg
-    global topOfStack
+    #global secondArg
+    #global topOfStack
+    pass
 
 
 
 def selectFromArray(arg):
-    global storage
-    global pointer
-    global topOfStack
+    #global storage
+    #global pointer
+    #global topOfStack
 
     if(arg == None):
-        topOfStack = storage[pointer][0]
+        v.topOfStack = v.storage[v.pointer][0]
     else:
-        topOfStack = storage[pointer][arg]
+        v.topOfStack = v.storage[v.pointer][arg]
 
 
 def concatToPrintBuffer(arg):
@@ -1367,102 +1478,102 @@ def concatToPrintBuffer(arg):
     #if neither argFlag, will append the top of the stack
     #if given an arg, will append the storage at the pointer
 
-    global printBuffer
-    global topOfStack
-    global storage
-    global pointer
-    global argFlag
-    global argFlag2
+    #global printBuffer
+    #global topOfStack
+    #global storage
+    #global pointer
+    #global argFlag
+    #global argFlag2
     #print("here1", arg, argFlag, argFlag2)
 
     if(arg != None):
         try:
             arg = int(arg)
         except:
-            printBuffer.append(arg)
+            v.printBuffer.append(arg)
             return
 
-    if(argFlag):
+    if(v.argFlag):
         if(arg == None):
-            printBuffer[-1] = ""
+            v.printBuffer[-1] = ""
         else:
-            printBuffer[arg] = ""
-    elif(argFlag2):
+            v.printBuffer[arg] = ""
+    elif(v.argFlag2):
         #print("here")
         if(arg == None):
-            del printBuffer[-1]
+            del v.printBuffer[-1]
         else:
-            del printBuffer[arg]
+            del v.printBuffer[arg]
     elif(type(arg)==str):
-        printBuffer.append(arg)        
+        v.printBuffer.append(arg)        
     elif(arg == None):
-        printBuffer.append(str(topOfStack))
+        v.printBuffer.append(str(v.topOfStack))
     else:
-        printBuffer.append(str(storage[arg]))
+        v.printBuffer.append(str(v.storage[arg]))
 
 
 def printAndResetBuffer(arg):
     #prints the stored string buffer all on one line
-    global printBuffer
+    #global printBuffer
     if(arg == None):
-        if(printBuffer != []):
-            printout("".join(printBuffer))
-            printBuffer = []
+        if(v.printBuffer != []):
+            printout("".join(v.printBuffer))
+            v.printBuffer = []
     else:
-        printout(("".join(printBuffer)) * arg)
-        printBuffer = []
+        printout(("".join(v.printBuffer)) * arg)
+        v.printBuffer = []
 
 def printInteger(arg):
     #given no arg, prints the top of the stack as an int
     #given an arg, prints the storage at arg as an int
-    global topOfStack
-    global storage
-    global pointer
+    #global topOfStack
+    #global storage
+    #global pointer
     #print(arg)
     if(arg == None):
-        if(type(topOfStack)==str or type(topOfStack)==chr):
-            printout(ord(str(topOfStack)))
+        if(type(v.topOfStack)==str or type(v.topOfStack)==chr):
+            printout(ord(str(v.topOfStack)))
         else:
-            printout(int(topOfStack))
-    elif(type(topOfStack)==int):
-        printout(int(storage[arg]))
-    elif(type(topOfStack)==str or type(topOfStack)==chr):
-        printout(ord(str(storage[arg])))
+            printout(int(v.topOfStack))
+    elif(type(v.topOfStack)==int):
+        printout(int(v.storage[arg]))
+    elif(type(v.topOfStack)==str or type(v.topOfStack)==chr):
+        printout(ord(str(v.storage[arg])))
 
 
 def getInteger(arg):
-    global topOfStack
-    global storage
-    global pointer
+    #global topOfStack
+    #global storage
+    #global pointer
     #print(arg)
     if(arg == None):
-        if(type(topOfStack)==str or type(topOfStack)==chr):
-            topOfStack = (ord(str(topOfStack)))
+        if(type(v.topOfStack)==str or type(v.topOfStack)==chr):
+            v.topOfStack = (ord(str(v.topOfStack)))
         else:
-            topOfStack = (int(topOfStack))
-    elif(type(topOfStack)==int):
-        topOfStack = (int(storage[arg]))
-    elif(type(topOfStack)==str or type(topOfStack)==chr):
-        topOfStack = (ord(str(storage[arg])))
+            v.topOfStack = (int(v.topOfStack))
+    elif(type(v.topOfStack)==int):
+        v.topOfStack = (int(v.storage[arg]))
+    elif(type(v.topOfStack)==str or type(v.topOfStack)==chr):
+        v.topOfStack = (ord(str(v.storage[arg])))
 
 
 def quitProgram(arg):
-    global currentCommandIndex
+    #global currentCommandIndex
     if(arg == None):
-        currentCommandIndex += 2147483647
+        v.currentCommandIndex += 2147483647
     else:
-        printout(storage[arg])
-        currentCommandIndex += 2147483647
+        printout(v.storage[arg])
+        v.currentCommandIndex += 2147483647
 
 
 def storeInput(arg):
-    global topOfStack
-    global pointer
-    global argFlag
-    global storage
+    #global topOfStack
+    #global pointer
+    #global argFlag
+    #global storage
 
     try:
-        oldTopOfStack = topOfStack
+        oldTopOfStack = v.topOfStack
         #topOfStack = [topOfStack]
     except:
         pass
@@ -1471,42 +1582,42 @@ def storeInput(arg):
         arg = int(arg)
         
 
-    if(arg == None and not(argFlag or argFlag2)):
+    if(arg == None and not(v.argFlag or v.argFlag2)):
         #no args: stores list at top of stack in consecutive memory slots
-        for elem in topOfStack:
-            storage[pointer] = elem
-            pointer += 1
-        topOfStack = oldTopOfStack
+        for elem in v.topOfStack:
+            v.storage[v.pointer] = elem
+            v.pointer += 1
+        v.topOfStack = oldTopOfStack
 
 
-    if(argFlag2):
+    if(v.argFlag2):
         # "?" arg (argFlag2)
         if(arg == None):
             #stores list at top of stack in consective memory slots, but in reverse
-            for i in range(len(topOfStack)):
-                storage[pointer] = topOfStack[-(i+1)]
-                pointer += 1
-            topOfStack = oldTopOfStack
+            for i in range(len(v.topOfStack)):
+                v.storage[v.pointer] = v.topOfStack[-(i+1)]
+                v.pointer += 1
+            v.topOfStack = oldTopOfStack
 
-    if(arg != None and not(argFlag or argFlag2)):
+    if(arg != None and not(v.argFlag or v.argFlag2)):
         #with numerical arg: gets value at index arg
-        topOfStack = topOfStack[arg]
+        v.topOfStack = v.topOfStack[arg]
 
-    if(arg != None and argFlag and not(argFlag2)):
+    if(arg != None and v.argFlag and not(v.argFlag2)):
         #argFlag and numerical arg: make list from arg number of values in consecutive memory slots starting at pointer
-        topOfStack = []
+        v.topOfStack = []
         for i in range(arg):
-            topOfStack.append(storage[pointer + i])
+            v.topOfStack.append(v.storage[v.pointer + i])
 
-    if(arg == None and argFlag and not(argFlag2)):
+    if(arg == None and v.argFlag and not(v.argFlag2)):
         #given ^ only, gets length of top of stack
-        if(type(topOfStack) == int):
-            topOfStack = len(str(topOfStack))
-        elif(type(topOfStack) == float):
+        if(type(v.topOfStack) == int):
+            v.topOfStack = len(str(v.topOfStack))
+        elif(type(v.topOfStack) == float):
             #make this return no. of decimal points instead? str(topOfStack).split(".")[1]
-            topOfStack = len(str(topOfStack))
+            v.topOfStack = len(str(v.topOfStack))
         else:
-            topOfStack = len(topOfStack)
+            v.topOfStack = len(v.topOfStack)
 
 
 
@@ -1520,16 +1631,120 @@ def getArray(arg):
 
 
 
+
 def exponentiate(arg):
-    global topOfStack
-    global argRaw
+    #global topOfStack
+    #global argRaw
+    
+    
+    
+    if(type(v.topOfStack) == list):
+        if(arg==None):
+            v.topOfStack = [elem ** 2 for elem in v.topOfStack]
+        else:
+            v.topOfStack = [elem ** v.argRaw for elem in v.topOfStack]
+        cleanTopOfStack()
+        return()
+    
+    
+    
+    
     mfloat()
     if(arg==None):
-        pass
+        v.topOfStack **=2
     else:
-        topOfStack **= argRaw
-    if(topOfStack == int(topOfStack)):
-        topOfStack = int(topOfStack)
+        v.topOfStack **= v.argRaw
+    if(v.topOfStack == int(v.topOfStack)):
+        v.topOfStack = int(v.topOfStack)
+
+
+
+def listOperation(arg):
+    
+    
+    if(type(v.topOfStack) != list):
+        if(arg == None):
+            if(v.argFlag):
+                v.topOfStack = [v.topOfStack, v.storage[v.pointer]]
+            else:
+                v.topOfStack = [v.topOfStack] #convert to list
+    
+        elif(v.argFlag):
+            v.topOfStack = [v.topOfStack, v.storage[arg]]
+        else:
+            v.topOfStack = [v.topOfStack, arg]
+    
+    elif(type(arg) == list): #given [x,y] set element x of the top of the stack to y
+        v.topOfStack[arg[0]] = arg[1]
+    
+    else:
+        if(arg == None):
+            if(v.argFlag):
+                v.topOfStack.append(v.storage[v.pointer])
+            else:
+                v.topOfStack = v.topOfStack[0] #convert from list to what's inside the list (e.g. [0] -> 0)
+    
+        elif(v.argFlag):
+            v.topOfStack.append(v.storage[arg])
+        else:
+            v.topOfStack.append(arg)
+        
+        
+        
+    
+    
+
+
+
+
+
+
+def executeLocalFunction(arg):
+    global v
+    global classList
+    #localFunctionToExecute = localFunctions[arg]
+    
+    
+    if(arg == None): #end local function
+        quitProgram(None)
+        return
+        #del classList[-1]
+        
+    
+    
+    #v = localVariables
+    if(v.argFlag): #pass all current data....
+        #v = copy.deepcopy(variables)
+        pass
+    
+    
+    exec("parse(str(v.topOfStack) + \"|!\" + variables.localFunctions[arg], topLevel = False)")
+    temp = v.topOfStack
+    
+    #print(v)
+    
+    #v = variables
+    #v.topOfStack = temp
+    #print("testing")
+
+    #print(classList[0].code, classList[1].code)
+    #print([elem.code for elem in classList])
+    #print("here%d",classList[-1].currentCommandIndex)
+    del classList[-1]
+    if(classList != []):
+        v = classList[-1]
+    else:
+        v = variables
+        #print("hereeee")
+
+    v.topOfStack = temp
+
+
+
+
+
+
+
 
 
 
@@ -1564,10 +1779,9 @@ def execute(code, flags, input_list, output_var):
             temp = """Code exited successfully.
 
 For documentation: https://github.com/DRH001/Rattle
-This online interpreter is a work in progress!
 
 Try an example program which checks to see if the input is prime:
-https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cf0%3B%5B1%3Df%5D-s%2B%3Es%5Bg%3C%25~%5B0%3Df%5Dg-s%3E%5D~%3D1&inputs=137"""
+https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7CF0%3A%5B1%3DF%5D-s%2B%3Es%5Bg%3C%25~%5B0%3DF%5Dg-s%3E%5D~%3D1&inputs=137""" + "\n\nRattle version " + str(version_)
         if(getError() != ""):
             temp = getError()
 
@@ -1577,8 +1791,10 @@ https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cf0%3B%5B1%3Df%5D-s%
             raise(error)
         temp = getError()
         
-    if(output_[-1] == "\n"):
-        output_ = output_[:-1]
+    
+    if(output_ != ""):
+        if(output_[-1] == "\n"):
+            output_ = output_[:-1]
         
     out[1] += output_#[:-1]
     out[2] = temp
