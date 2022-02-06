@@ -875,6 +875,15 @@ def multiply(arg):#stack*=arg
     #mfloat()
     
     if(type(v.topOfStack) == list):
+        if(type(arg) == list):
+            temp = []
+            for i in range(len(v.topOfStack)):
+                temp.append(v.topOfStack[i] * arg[i])
+            
+            v.topOfStack = temp
+            return
+            
+            
         if(arg==None):
             v.topOfStack = [elem * 2 for elem in v.topOfStack]
         else:
