@@ -821,7 +821,7 @@ def subtract(arg):#subtract arg from stack
     #global topOfStack
     
     if(type(v.topOfStack) == str or type(arg) == str):
-        v.topOfStack = v.topOfStack.replace(arg, "")
+        v.topOfStack = v.topOfStack.replace(str(arg), "")
         return
     
     
