@@ -1,0 +1,26 @@
+l is used to create and manipulate lists.
+
+
+
+Generally:
+l^ appends the value in storage at the pointer to the top of the stack
+l^n appends the value in storage in slot n to the top of the stack
+l with an argument but no flags (e.g. just `l2`) appends the argument to the top of the stack
+
+
+If the top of the stack is not a list:
+
+l without arguments makes it a list (e.g. x -> [x])
+
+
+If the top of the stack is a list:
+
+l(x,y) sets element x of the top of the stack to y
+l converts the top of the stack from [x] to x
+
+
+
+
+
+[introduced in 1.6.0]
+[last updated in 1.6.0]
