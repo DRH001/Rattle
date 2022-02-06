@@ -463,8 +463,14 @@ def runCommand(c):
         if(inLoop):
             arg = arg.replace("~",str(v.intoLoopArgs[-1][1]))
             v.argRaw = v.storage[v.pointer]
-        else:    
-            arg = arg.replace("~",str(int(v.storage[v.pointer])))
+        else:   
+            try:
+                arg = arg.replace("~",str(int(v.storage[v.pointer])))
+            except:#list...
+                import ast
+                arg = arg.replace("~", str(v.storage[v.pointer]))
+                arg = ast.literal_eval(arg)
+                #arg = [n.strip() for n in arg]
             v.argRaw = v.storage[v.pointer]
             
             
@@ -873,7 +879,7 @@ def multiply(arg):#stack*=arg
     #given other arg, multiplies top of stack by arg
     #global topOfStack
     #mfloat()
-    
+    #print(arg)
     if(type(v.topOfStack) == list):
         if(type(arg) == list):
             temp = []
