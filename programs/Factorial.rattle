@@ -1,6 +1,6 @@
 |s [0+q] [$ - $ *~](`-1)
 
-: [everything other than line 1 is a comment]
+: [everything other than line 1 is a comment in this case]
 
 
 https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cs%20%5B0%2Bq%5D%20%5B%24%20-%20%24%20*~%5D%28%60-1%29&inputs=10
