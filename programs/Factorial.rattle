@@ -1,5 +1,23 @@
-|I2<[0+q][g-s<*~s>]~
+|s [0+q] [$ - $ *~](`-1)
+
+: [everything other than line 1 is a comment]
+
+
+https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cs%20%5B0%2Bq%5D%20%5B%24%20-%20%24%20*~%5D%28%60-1%29&inputs=10
+
+
+Explanation:
+
+
+|                          take user's input
+ s                         save user's input to memory slot 0
+   [0  ]                   if value is 0, run code inside
+     +q                    increment value (to 1) then quit, print implicitly. This is a special case where 0! = 1
+         [        ](`-1)   loop n-1 times where n is the value given as input
+          $                swap the top of the stack with the stored value
+            -              subtract one
+              $            swap this value with the stored value again
+                *~         multiply the value on top of the stack by the value in storage
 
 
 
-[NEEDS UPDATE - DOES NOT WORK CURRENTLY]
