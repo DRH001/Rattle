@@ -1,0 +1,21 @@
+|F0:s[1F]-F0*~
+
+
+
+
+: (line 1 is code, everything else is a comment)
+
+
+
+Explanation:
+
+|                parses the user's input
+ F0              calls local function 0
+   :             (separator between the main method and local function 0)
+    s            save the current value to local memory slot 0 (local to only this instance of F0)
+     [1 ]        if the value is equal to 1, then:
+       F         return (returns 1)
+         -       subtract 1 from the current value
+          F0     recursively call function 0 with the current value as a parameter
+            *~   multiply the result of function 0 by the value stored in local memory
+                 (the result of the multiplication is returned)
