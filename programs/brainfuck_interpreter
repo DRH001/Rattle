@@ -1,0 +1,36 @@
+\&[0]*1111&555&|!I
+
+
+
+[
+  g0 P4 I~n
+
+  [62 g2 + s2]
+  [60 g2 - s2]
+  [43 g1 P2 I~ + r` g1 l(~,\)]
+  [45 g1 P2 I~ - r` g1 l(~,\)]
+  [46 g1 P2 I~ ,]
+  [91 g1 P2 I~ [0 f0]]
+  [93 g1 P2 I~ [^0 f1]]
+
+  g4 + s4
+  g0 I^ P4 [~q]
+  P4g
+]0
+
+
+;g6 =+ s6 [g4 + s4 g0 P4 I~ n s8 [91 g6 + s6] g8 [93 g6 - s6 [0 f]]]0
+;g7 =+ s7 [g4 - s4 g0 P4 I~ n s8 [93 g7 + s7] g8 [91 g7 - s7 [0 f]]]0
+
+
+:
+data tape values:
+0 - code
+1 - code data tape
+2 - code pointer
+3 - input
+4 - code command index
+5 - input character index
+6 - open loop counter
+7 - close loop counter
+8 - temp
