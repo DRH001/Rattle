@@ -4,12 +4,17 @@ Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
 
-Updated 2022-02-06 13:00 EST
+Updated 2022-02-07 18:00 EST
 """
-version_ = "1.6.0"
+version_ = "1.6.1"
 
 """
 to do:
+    
+    make | its own function, transform ! into argflag3
+    
+    error handling for local functions ("error in function N" etc.)
+    
     
     make an arg of zero for a for loop stay at zero instead of going negative. [...]_n should loop n times but count backwards
     
@@ -190,10 +195,10 @@ def parse(code, topLevel = True):
 
     v.outputAtEnd = True
     v.commandsCopy = None
-
+    v.inFunctionList = []
     #don't handle errors for now
 
-
+    v.loopListList = []
 
     '''
     input|main;function0;function1......functionN:Function0:Function1.....FunctionN [then add arguments here which are stored to a local storage with max of 100 values] <-- NOT pushed to stack, separated by ,
@@ -367,7 +372,7 @@ def getCommandList(f, rep):
 
     #f.replace("\n","")
     
-    possibleArgs = "0123456789~`@&^?._#()"# & represents a spacer in case some functions need lots of arguments
+    possibleArgs = "0123456789~`@&^?._#()\\"# & represents a spacer in case some functions need lots of arguments
     
     #^ and ? are argument flags
     tempList = []
@@ -457,7 +462,9 @@ def runCommand(c):
         arg = arg.replace("_","-")
         v.argRaw = arg
         
-    
+    if("\\" in arg):
+        arg = arg.replace("\\",str(v.secondArg))
+        v.argRaw = arg
 
     if("~" in arg):
         if(inLoop):
@@ -622,21 +629,28 @@ def executeFunction(functionIndex):
     #global currentFunction
     #global loopList
     #global firstError
-
-    v.inFunction = True
+    
+    v.loopListList.append(copy.deepcopy(v.loopList))
+    print("here1",v.loopListList)
+    
+    v.inFunctionList.append(True)
+    v.inFunction = v.inFunctionList[-1]
 
     #print("function: ", functionIndex)
 
     if(functionIndex == None):
         v.endFunctionFlag = True
+        
 
+        print("here2",v.loopList)
+        '''
         while(v.currentCommandIndexF[-1] < len(v.functionCommandList[v.currentFunction])):
             if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "]"):
                 del v.loopList[-1]
             if(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]][0] == "]"):
                 v.loopList.append(0)
 
-            v.currentCommandIndexF[-1] += 1
+            v.currentCommandIndexF[-1] += 1'''
         #currentCommandIndex = skipTo.pop(-1)
         #print("skipTo after pop: ", skipTo)
     else:
@@ -676,7 +690,7 @@ def executeFunction(functionIndex):
                     errorout("Error: " + error_string + " at function command index " + str(v.currentCommandIndexF[-1]) + " [" + str(v.functionCommandList[v.currentFunction][v.currentCommandIndexF[-1]]) + "]")
 
 
-                v.currentCommandIndexF.pop(-1)
+                #v.currentCommandIndexF.pop(-1)
                 v.currentFunction = functionIndex
                 raise(Exception("error in function " + str(v.currentFunction)))
             v.currentCommandIndexF[-1] += 1
@@ -703,7 +717,19 @@ def executeFunction(functionIndex):
     #print(commands)
 
     #don't parse a function - insert its operations into queue
-    v.inFunction = False
+    del v.inFunctionList[-1]
+    
+    v.loopList = v.loopListList[-1]
+    del v.loopListList[-1]
+    
+    print("here3", v.loopList)
+        
+    if(len(v.inFunctionList)==0):
+        v.inFunction = False
+    else:
+        v.inFunction = True
+
+
 
 def debugIndex(arg):
     printout("d" + str(arg) + " has been executed")
@@ -1090,7 +1116,8 @@ def startLoop(arg):
                 v.currentCommandIndex -= 1
             #if statement..... based on stuff in storage (with a flag or something)
     else:
-        v.loopList.append(v.currentCommandIndexF[v.currentFunction])
+
+        v.loopList.append(v.currentCommandIndexF[-1])
         if(arg == None or arg == ""): #case where the other bracket has an argument
             pass
         elif(v.argFlag):
@@ -1107,7 +1134,7 @@ def startLoop(arg):
                         if(opens == 0):
                             closed = True
                 v.currentCommandIndexF[-1] -= 1
-                
+
             
         else:
             #print(arg, topOfStack)
@@ -1588,7 +1615,7 @@ def storeInput(arg):
     #global pointer
     #global argFlag
     #global storage
-
+    #print("here!")
     try:
         oldTopOfStack = v.topOfStack
         #topOfStack = [topOfStack]
@@ -1695,6 +1722,9 @@ def listOperation(arg):
         v.topOfStack[arg[0]] = arg[1]
     
     else:
+        if(v.argFlag2):
+            del v.topOfStack[-1]
+            return
         if(arg == None):
             if(v.argFlag):
                 v.topOfStack.append(v.storage[v.pointer])
