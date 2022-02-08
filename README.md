@@ -1,7 +1,9 @@
-# Rattle (version 1.6.0)
+# Rattle (version 1.6.1)
 A new imperative programming language designed to have no necessary boilerplate
 
 [Click here](https://rattleinterpreter.pythonanywhere.com/) to try out some code of your own!
+
+Want to see how to write a programming language in Rattle? Check out a [Brainf*** interpreter written in Rattle!](https://bit.ly/Rattle_brainfuck)
 
 
 This interpreted language is developed to be easy to use and hard to mess up. To acheive this, all commands are a single character and their arguments follow - for example, you would simply do `+2` to add 2 to the current value.
