@@ -2,7 +2,7 @@
 Rattle has now officially been released! Rattle is now an imperative language - it's now actually useful for normal programming!
 
 1.6.2:
-  -Use l? to create an empty list when the top of the stack is not already a list (otherwise deletes the last element in the list)
+  -Use l? to create an empty list when the top of the stack is not already a list (otherwise deletes the last element in the list) 
 1.6.1:
   -Loop structure fixes (especially inside functions)
   -Fixing functionality of second argument. Use r` to assign the second arg to the top of the stack and \ to use it
