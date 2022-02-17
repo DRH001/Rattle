@@ -4,9 +4,9 @@ Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
 
-Updated 2022-02-07 18:00 EST
+Updated 2022-02-16 21:00 EST
 """
-version_ = "1.6.1"
+version_ = "1.6.2"
 
 """
 to do:
@@ -1707,6 +1707,9 @@ def listOperation(arg):
     
     
     if(type(v.topOfStack) != list):
+        if(v.argFlag2): #create empty list with l? when the top of the stack is not a list
+            v.topOfStack = []
+            return
         if(arg == None):
             if(v.argFlag):
                 v.topOfStack = [v.topOfStack, v.storage[v.pointer]]
