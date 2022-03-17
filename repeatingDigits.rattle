@@ -1,0 +1,19 @@
+|r` [1f1]  =1  [P s s2   f0  %\  [0f1]     [1>gq]  >>  [~=1q]      ]0
+
+
+;   s =(`<\)["True"g*10 >$+$< f0]["False"g]
+
+;b"not repeating"q
+
+
+
+:[lines 8+ are just a comment]
+
+This program takes a number as input and outputs the number of digits in each unit of repeating numbers in its reciprocal. 
+
+For example, given an input of 9:
+  1/11 = 0.0909090909..... which is just .09 repeating, which has two digits.
+  So, the program will output 2.
+
+program:
+https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cr%60%20%20%20%3D1%20%20%5BP%20s%20s2%20%20%20f0%20%20%20%20%20%20%25%5C%20%20%5B0b%22not%20repeating%22q%5D%20%20%20%20%20%5B1%3Egq%5D%20%20%3E%3E%20%20%5B~%3D1q%5D%20%20%20%20%20%20%5D0%0A%0A%0A%3B%20%20%20s%20%3D%28%60%3C%5C%29%5B%22True%22g*10%20%3E%24%2B%24%3C%20f0%5D%5B%22False%22g%5D%0A%0A%0A&inputs=997
