@@ -1,4 +1,4 @@
-# Rattle (version 1.6.2)
+# Rattle (version 1.6.3)
 A new imperative programming language designed to have no necessary boilerplate
 
 [Click here](https://rattleinterpreter.pythonanywhere.com/) to try out some code of your own!
@@ -62,7 +62,7 @@ In Rattle, there are many commands you can use:
             "l":listOperation                   #initiates and manipulates lists
 
 
-New in 1.6: Local functions (and much more)! Local functions can be used to perform complex tasks without changing anything in the main data tape. For example, a local function could take the top of the stack and return a value based on whether that value is prime, without changing any pre-existing variables in memory. This makes development of larger programs significantly easier. Also new: better list/array handling, randomness.
+New in 1.6: Local functions (and much more)! Local functions can be used to perform complex tasks without changing anything in the main data tape. For example, a local function could take the top of the stack and return a value based on whether that value is prime, without changing any pre-existing variables in memory. This makes development of larger programs significantly easier. Also new: better list/array handling, randomness, 0b and 0x conversion support.
 
 New in 1.5: Better arguments! Now, round brackets "(", ")" can be used to pass more complex arguments to functions. Example: `=(2*4/3)` will set the top of the stack to 2.66...
                   Note that special characters can be used in the round-bracket arguments - you can use `~`,``` ` ```,`@`, etc.
