@@ -1,10 +1,11 @@
 
 
 
-R0 -> convert to binary. With argFlag, keeps 0b prefix
 
 R1 -> convert to int
 R2 -> convert to string
 R3 -> convert to float
 
 R4 -> convert to hex. With argFlag, keeps 0x prefix
+
+R5 -> convert to binary. With argFlag, keeps 0b prefix
