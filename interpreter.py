@@ -4,9 +4,9 @@ Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
 
-Updated 2022-02-16 21:00 EST
+Updated 2022-05-03 13:00 EST
 """
-version_ = "1.6.2"
+version_ = "1.6.3"
 
 """
 to do:
@@ -38,7 +38,7 @@ new:
     negatives (_) (in args as well) (NEEDS TESTING)
     strings (take "" as args) [done]
     
-    
+    convert to bin, hex
     
     
 
@@ -745,12 +745,26 @@ def reformat(arg):
     if(len(fmt) == 1):
         fmt += "0"
 
+    
+    
     if(fmt[0] == "1"):
         mint(int(fmt[1::]))
     elif(fmt[0] == "2"):
         mstr(int(fmt[1::]))
     elif(fmt[0] == "3"):
         mfloat(int(fmt[1::]))
+    elif(fmt[0] == "4"):
+        if(v.argFlag):
+            v.topOfStack = format(int(v.topOfStack), "#x")
+        else:
+            v.topOfStack = format(int(v.topOfStack), "#x")[2::]
+        
+    elif(fmt[0] == "5"):
+        if(v.argFlag):
+            v.topOfStack = format(int(v.topOfStack), "#010b")
+        else:
+            v.topOfStack = format(int(v.topOfStack), "#010b")[2::]
+        
 
 
 def mint(sigdigs=0):
@@ -1700,6 +1714,10 @@ def exponentiate(arg):
         v.topOfStack **= v.argRaw
     if(v.topOfStack == int(v.topOfStack)):
         v.topOfStack = int(v.topOfStack)
+
+
+
+
 
 
 
