@@ -1,7 +1,7 @@
 # Rattle (version 1.6.3)
 A new imperative programming language designed to have no necessary boilerplate
 
-Note that the online interpreter has been moved to [www.drh001.com](www.drh001.com). All links to the old interpreter will now redirect to the new page.
+Note that the online interpreter has been moved to [www.drh001.com](https://www.drh001.com). All links to the old interpreter will now redirect to the new page.
 
 [Click here](https://rattleinterpreter.pythonanywhere.com/) to try out some code of your own!
 
