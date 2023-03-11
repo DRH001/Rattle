@@ -115,7 +115,7 @@ Going from left to right,
 
 Upcoming releases
 =
-
+l (or R) will contain a function to split a string into a char list
 
 
 Want to see your ideas implemented? Email [rattleinterpreter@gmail.com](mailto:rattleinterpreter@gmail.com)
