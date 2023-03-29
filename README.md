@@ -116,6 +116,7 @@ Going from left to right,
 Upcoming releases
 =
 l (or R) will contain a function to split a string into a char list
+
 Infinite loops will only occur if the loop count is explicitly 0 (e.g. `]0`), but not if implicitly 0 (e.g. `]~` where ~ is 0). Currently both cases would loop infinitely.
 
 
