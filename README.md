@@ -74,7 +74,7 @@ New in 1.5: Better arguments! Now, round brackets "(", ")" can be used to pass m
 Sample program
 =
 
-Here's a [sample program](https://rattleinterpreter.pythonanywhere.com/?flags=&code=%7Cf0%3B%5B1%3Df%5D-s%2B%3Es%5Bg%3C%25~%5B0%3Df%5Dg-s%3E%5D~%3D1&inputs=13) which takes the user's input and determines whether it is a prime number:
+Here's a [sample program](https://www.drh001.com/rattle/?flags=&code=%7Cf0%3B%5B1%3Df%5D-s%2B%3Es%5Bg%3C%25~%5B0%3Df%5Dg-s%3E%5D~%3D1&inputs=13) which takes the user's input and determines whether it is a prime number:
 
             |f0;[1=f]-s+>s[g<%~[0=f]g-s>]~=1
             
