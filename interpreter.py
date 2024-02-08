@@ -4,9 +4,9 @@ Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
 
-Updated 2022-05-03 13:00 EST
+Updated 2024-02-08 17:22 EST
 """
-version_ = "1.6.3"
+version_ = "1.7.0"
 
 """
 to do:
@@ -38,7 +38,7 @@ new:
     negatives (_) (in args as well) (NEEDS TESTING)
     strings (take "" as args) [done]
     
-    convert to bin, hex
+    
     
     
 
@@ -427,6 +427,28 @@ def solveArg(arg):
 
 
 
+def clean(value): #experimental
+    try:
+        if(float(value) == int(value)):
+            return(int(value))
+    except:
+        pass
+    
+    try:
+        return(float(value))
+        
+    except:
+        pass
+    
+    if(type(value) == tuple):
+        return(list(value))
+    
+    
+    
+    return(value)
+    
+
+
 
 def runCommand(c):
     #global storage
@@ -574,8 +596,8 @@ def runCommand(c):
             "R":reformat, #arg 000000... where the first digit is type (1=int, 2=string, 3=float) - see below for details about remaining digits
             "s":store,
             "g":get,
-            "<":pointerDown,
-            ">":pointerUp,
+            "<":pointerDown,#also used for comparison operator
+            ">":pointerUp,#also used for comparison operator
             "P":setPointer,
             "p":prnt,
             "!":flag,
@@ -745,26 +767,12 @@ def reformat(arg):
     if(len(fmt) == 1):
         fmt += "0"
 
-    
-    
     if(fmt[0] == "1"):
         mint(int(fmt[1::]))
     elif(fmt[0] == "2"):
         mstr(int(fmt[1::]))
     elif(fmt[0] == "3"):
         mfloat(int(fmt[1::]))
-    elif(fmt[0] == "4"):
-        if(v.argFlag):
-            v.topOfStack = format(int(v.topOfStack), "#x")
-        else:
-            v.topOfStack = format(int(v.topOfStack), "#x")[2::]
-        
-    elif(fmt[0] == "5"):
-        if(v.argFlag):
-            v.topOfStack = format(int(v.topOfStack), "#010b")
-        else:
-            v.topOfStack = format(int(v.topOfStack), "#010b")[2::]
-        
 
 
 def mint(sigdigs=0):
@@ -981,12 +989,14 @@ def pointerUp(arg):
             v.pointer += 1
         else:
             v.pointer = 0
-    else:
+    elif(v.argFlag):
         for i in range(arg):
             if(v.pointer != 99):
                 v.pointer += 1
             else:
                 v.pointer = 0
+    else:
+        v.topOfStack = v.topOfStack > arg
 
 
 def pointerDown(arg):
@@ -998,12 +1008,14 @@ def pointerDown(arg):
             v.pointer -= 1
         else:
             v.pointer = 99
-    else:
+    elif(v.argFlag):
         for i in range(arg):
             if(v.pointer != 0):
                 v.pointer -= 1
             else:
                 v.pointer = 99
+    else:
+        v.topOfStack = v.topOfStack < arg
 
 
 def setPointer(arg):
@@ -1714,10 +1726,6 @@ def exponentiate(arg):
         v.topOfStack **= v.argRaw
     if(v.topOfStack == int(v.topOfStack)):
         v.topOfStack = int(v.topOfStack)
-
-
-
-
 
 
 
