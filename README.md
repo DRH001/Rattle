@@ -1,4 +1,4 @@
-# Rattle (version 1.6.3)
+# Rattle (version 1.7.0)
 A new imperative programming language designed to have no necessary boilerplate
 
 Note that the online interpreter has been moved to [www.drh001.com](https://www.drh001.com). All links to the old interpreter will now redirect to the new page.
@@ -32,8 +32,8 @@ In Rattle, there are many commands you can use:
             "R":reformat                        #used to format data types
             "s":store,                          #stores top of the stack onto the data tape at the current pointer
             "g":get,                            #puts value at current pointer onto the top of the stack
-            "<":pointerDown,                    #moves pointer down (or to the left)
-            ">":pointerUp,                      #moves pointer up (or to the right)
+            "<":pointerDown,                    #moves pointer down (or to the left). With an argument, compares the top of the stack to the argument instead.
+            ">":pointerUp,                      #moves pointer up (or to the right). With an argument, compares the top of the stack to the argument instead.
             "P":setPointer,                     #sets pointer to argument
             "p":prnt,                           #prints item at the top of the stack
             "!":flag,                           #disables implicit output
