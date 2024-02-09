@@ -4,9 +4,9 @@ Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
 
-Updated 2024-02-08 17:22 EST
+Updated 2022-02-16 21:00 EST
 """
-version_ = "1.7.0"
+version_ = "1.7.1"
 
 """
 to do:
@@ -183,7 +183,7 @@ def parse(code, topLevel = True):
     #loopStart = 0
     #loopCounter = 0
     v.pointer = 0
-    v.storage = [0] * 100
+    v.storage = [0] * 10000
     v.topOfStack = 0
     v.loopList = []
     v.storedArray = []
@@ -201,7 +201,7 @@ def parse(code, topLevel = True):
     v.loopListList = []
 
     '''
-    input|main;function0;function1......functionN:Function0:Function1.....FunctionN [then add arguments here which are stored to a local storage with max of 100 values] <-- NOT pushed to stack, separated by ,
+    input|main;function0;function1......functionN:Function0:Function1.....FunctionN [then add arguments here which are stored to a local storage with max of 10000 values] <-- NOT pushed to stack, separated by ,
     if | is the first character, input is taken through input(). If there is a "|", then whatever comes before it is pushed to stack. Otherwise, no input
 
     if the first character in main is a number, then the main method will be repeated that many times (i.e 1main will run twice) -> special case, 0 -> repeats 10 additional times (for 11 times total)
@@ -985,13 +985,13 @@ def pointerUp(arg):
     #given an arg, moves the pointer up arg places
     #global pointer
     if(arg == None):
-        if(v.pointer != 99):
+        if(v.pointer != 9999):
             v.pointer += 1
         else:
             v.pointer = 0
     elif(v.argFlag):
         for i in range(arg):
-            if(v.pointer != 99):
+            if(v.pointer != 9999):
                 v.pointer += 1
             else:
                 v.pointer = 0
@@ -1007,13 +1007,13 @@ def pointerDown(arg):
         if(v.pointer != 0):
             v.pointer -= 1
         else:
-            v.pointer = 99
+            v.pointer = 9999
     elif(v.argFlag):
         for i in range(arg):
             if(v.pointer != 0):
                 v.pointer -= 1
             else:
-                v.pointer = 99
+                v.pointer = 9999
     else:
         v.topOfStack = v.topOfStack < arg
 
@@ -1335,7 +1335,7 @@ def modulo(arg):
     elif(arg == 0):
         v.topOfStack = v.topOfStack % 10
     elif(arg == 1):
-        v.topOfStack = v.topOfStack % 100
+        v.topOfStack = v.topOfStack % 10000
     else:
         v.topOfStack = v.topOfStack % arg
     if(v.topOfStack == int(v.topOfStack)):
