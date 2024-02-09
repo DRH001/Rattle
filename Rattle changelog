@@ -1,6 +1,14 @@
 
 Rattle has now officially been released! Rattle is now an imperative language - it's now actually useful for normal programming!
 
+1.7.2:
+  - data tape set to 100 slots by default, but expands automatically if more slots are needed. 
+    -Note < still goes to the last slot when the pointer is 0, but > does not go to 0 from the last slot - it expands the data tape instead.
+1.7.1:
+  - data tape expanded to 10000 slots.
+1.7.0:
+  - < and > operators now compare the top of the stack to an argument, resulting in True or False. Note you can do *1 to turn True or False into 1 or 0 respectively.
+
 1.6.2:
   -Use l? to create an empty list when the top of the stack is not already a list (otherwise deletes the last element in the list) 
 1.6.1:
