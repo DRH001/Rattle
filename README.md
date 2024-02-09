@@ -1,5 +1,5 @@
 # Rattle (version 1.7.0)
-A new imperative programming language designed to have no necessary boilerplate
+A new imperative programming language designed to have no necessary boilerplate.
 
 Note that the online interpreter has been moved to [www.drh001.com](https://www.drh001.com). All links to the old interpreter will now redirect to the new page.
 
@@ -10,7 +10,7 @@ Want to see how to write a programming language in Rattle? Check out a [Brainf**
 
 This interpreted language is developed to be easy to use and hard to mess up. To acheive this, all commands are a single character and their arguments follow - for example, you would simply do `+2` to add 2 to the current value.
 
-Rattle is a very versatile language - it works on a 100-slot circular data tape, where you can move the pointer to whichever slot you want, and manipulate data in that slot and at the top of the stack at the same time. Rattle is an imperative programming language, like C++.
+Rattle is a very versatile language - it works on an expandable data tape, where you can move the pointer to whichever slot you want, and manipulate data in that slot and at the top of the stack at the same time.
 
 Basics
 =
@@ -63,6 +63,7 @@ In Rattle, there are many commands you can use:
             "F":executeLocalFunction,           #executes local functions - when used without an argument, acts as a return statement
             "l":listOperation                   #initiates and manipulates lists
 
+New in 1.7: Comparison operators `<>` when used with an argument. Still moves pointer left/right if used without an argument, or left/right N spaces if used with the argflag `^`. Also new: expandable data tape (may break older programs). Instead of a circular data tape, it now self-expands if the pointer is moved outside of existing data slots.
 
 New in 1.6: Local functions (and much more)! Local functions can be used to perform complex tasks without changing anything in the main data tape. For example, a local function could take the top of the stack and return a value based on whether that value is prime, without changing any pre-existing variables in memory. This makes development of larger programs significantly easier. Also new: better list/array handling, randomness, 0b and 0x conversion support.
 
