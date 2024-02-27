@@ -4,9 +4,9 @@ Created on Thu Aug 13 08:48:37 2020
 
 @author: Daniel
 
-Updated 2024-02-09 14:09 EST
+Updated 2024-02-26 21:08 EST
 """
-version_ = "1.7.2"
+version_ = "1.7.3"
 
 """
 to do:
@@ -773,6 +773,17 @@ def reformat(arg):
         mstr(int(fmt[1::]))
     elif(fmt[0] == "3"):
         mfloat(int(fmt[1::]))
+    elif(fmt[0] == "4"):
+        if(v.argFlag):
+            v.topOfStack = format(int(v.topOfStack), "#x")
+        else:
+            v.topOfStack = format(int(v.topOfStack), "#x")[2::]
+
+    elif(fmt[0] == "5"):
+        if(v.argFlag):
+            v.topOfStack = format(int(v.topOfStack), "#010b")
+        else:
+            v.topOfStack = format(int(v.topOfStack), "#010b")[2::]
 
 
 def mint(sigdigs=0):
@@ -998,7 +1009,7 @@ def pointerUp(arg):
                 v.storage.append(0)
                 v.pointer += 1
     else:
-        v.topOfStack = v.topOfStack > arg
+        v.topOfStack = (v.topOfStack > arg) * 1
 
 
 def pointerDown(arg):
@@ -1017,7 +1028,7 @@ def pointerDown(arg):
             else:
                 v.pointer = len(v.storage)-1
     else:
-        v.topOfStack = v.topOfStack < arg
+        v.topOfStack = (v.topOfStack < arg) * 1
 
 
 def setPointer(arg):
