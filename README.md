@@ -118,6 +118,8 @@ Upcoming releases
 =
 l (or R) will contain a function to split a string into a char list
 
+q with an argument will soon act as a break statement, breaking the topmost N loops (N=arg)
+
 Infinite loops will only occur if the loop count is explicitly 0 (e.g. `]0`), but not if implicitly 0 (e.g. `]~` where ~ is 0). Currently both cases would loop infinitely.
 
 
