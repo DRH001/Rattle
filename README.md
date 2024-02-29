@@ -122,6 +122,8 @@ q with an argument will soon act as a break statement, breaking the topmost N lo
 
 the # argument will work better (currently broken when used as arguments for some functions)
 
+=?N would check if the top of the stack is equal to N, =^N would check if the top of the stack is not equal to N
+
 Infinite loops will only occur if the loop count is explicitly 0 (e.g. `]0`), but not if implicitly 0 (e.g. `]~` where ~ is 0). Currently both cases would loop infinitely.
 
 
